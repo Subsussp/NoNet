@@ -14,7 +14,7 @@ import PrivateRoutes from 'utills/adminonly'
 import Noroute from 'components/Error404.jsx'
 import axios from 'axios';
 import {useQuery} from '@tanstack/react-query'
-import {fetchitems, fetchuser} from 'utills/fetch.js'
+import {fetchitems} from 'utills/fetch.js'
 import { API_BASEURL } from 'Var/URLS.js';
 import Top from 'pages/Root/Top.jsx';
 import  {Userpage, Store } from 'pages/Root/Shop/user.jsx';
@@ -24,7 +24,6 @@ import Order from 'components/order.jsx';
 import Products from 'pages/control/Products.jsx';
 import Dashboard from 'pages/Dashboard/dashboard.jsx';
 import CheckoutForm from 'pages/proccess/Checkout.jsx';
-import Navigator from './components/BottomNav.jsx';
 
 const App = () => {
   let {data: itemdata,refetch,isLoading} = useQuery({queryKey:['items'],queryFn:fetchitems})

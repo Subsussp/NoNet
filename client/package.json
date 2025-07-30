@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://Subsussp.github.io/NoNet/",
   "dependencies": {
     "@cloudinary/react": "^1.14.1",
     "@cloudinary/url-gen": "^1.21.0",
@@ -15,6 +16,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.8",
     "framer-motion": "^12.4.4",
+    "gh-pages": "^6.3.0",
     "html-react-parser": "^5.1.18",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.475.0",
@@ -29,13 +31,15 @@
     "recharts": "^2.15.1",
     "web-vitals": "^2.1.4",
     "zod": "^3.24.2"
-  },
-  "scripts": {
-    "start": "react-scripts start ",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+  },"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
+}
+,
   "eslintConfig": {
     "extends": [
       "react-app",

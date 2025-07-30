@@ -4,7 +4,7 @@ Welcome to my personal e-commerce project! This is a sleek, modern web store bui
 
 ## 🌐 See It in Action
 
-👉 Launch the store now: [Click for Live Demo](https://nonet-production.up.railway.app/)
+👉 Launch the store now: [Click for Live Demo](https://subsussp.github.io/NoNet/)
 
 ---
 

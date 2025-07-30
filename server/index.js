@@ -16,15 +16,22 @@ const Catg = require("./src/models/Catg.js");
 const OrderRout = require("./src/routes handler/Order.js");
 let cloudinary = require('cloudinary').v2
 require('dotenv').config()
+app.set('trust proxy', 1);
+
 let sessionmidm = session({
   secret: "okpY62342tjq0NGij8r",
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 * 90 },
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 90   , 
+    httpOnly: true,
+    secure: true,             
+    sameSite: 'None'},
 });
 const allowedOrigins = [
-  process.env.FRURL
+  process.env.FRURL,
+  'https://subsussp.github.io/',
+  'https://subsussp.github.io/NoNet/'
 ];
 
 app.use(cors({
