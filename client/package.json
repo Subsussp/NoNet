@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Subsussp.github.io/NoNet/",
+  "homepage": "https://Subsussp.github.io/NoNet",
   "dependencies": {
     "@cloudinary/react": "^1.14.1",
     "@cloudinary/url-gen": "^1.21.0",
