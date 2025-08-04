@@ -1,6 +1,6 @@
 import { LiaShoppingBagSolid } from "react-icons/lia";
 import {storeName,Storecolors,logo} from '../Var/config.js'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate, } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import '../Assets/Style.css'
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ import { Menu, X } from 'lucide-react';
 const Header = ({userR,setDarkMode,isDarkMode}) => {
     let [showList,setShow] = useState(false)
     let [searchParams,setSearchParams] = useState('')
+    const navigate = useNavigate();
     let ShopData = useContext(Shopcontext)
     const [isMenuOpen, setIsOpen] = useState(false);
     const [mdiconVisible, setIsVisible] = useState(false);
@@ -124,8 +125,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             if(Obj.admin && userR != 'admin'){
                                 return 
                             }
-                            return <li key={index} className="w-full px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems hover:text-mainele">
-                                <Link className="flex w-full items-center space-x-3" to={Obj.link}>
+                            return <li key={index} onClick={() => Obj.link && navigate(`${Obj.link}`)}  className="w-full cursor-pointer flex w-full items-center space-x-3 px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems hover:text-mainele">
                                     <span >{Obj.icon}</span>
                                     <span className="flex-1 ">{Obj.label}</span>
                                     {Obj.suffix && (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
@@ -136,7 +136,6 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                                         </div>
                                         </button>
                                     )}
-                                </Link>
                         </li>
                         })}
                         </ul>
@@ -195,7 +194,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             </>
                         })}
                 
-                <a
+                {/* <a
                     href="#"
                     className="text-dropitems hover:bg-dropitems hover:text-mainele block px-3 py-2 rounded-md font-medium"
                 >
@@ -206,7 +205,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                     className="text-dropitems hover:bg-dropitems hover:text-mainele block px-3 py-2 rounded-md font-medium"
                 >
                     Model X
-                </a>
+                </a> */}
             </div>
                 </div> }
         </header> 

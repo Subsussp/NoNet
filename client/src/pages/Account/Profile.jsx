@@ -1,14 +1,18 @@
 import axios from "axios"
 import { API_BASEURL } from "Var/URLS"
 import { useEffect, useState } from "react"
-export default () =>{
+export default function Profile() {
     async function getProfile(){
         let data = await axios.get((API_BASEURL + '/profile'),{withCredentials:true})
-        return (data.data)
+        if(data?.data){
+            return (data.data)
+        }else{
+            return 'Error'
+        }
     }
     useEffect(async ()=>{
         let res = await getProfile()
-        document.body.innerHTML = document.body.innerHTML + res
+        console.log(res)
     },[])
-    return <></>
+    return <>{'backend working only you can see the profile in the console'}</>
 }

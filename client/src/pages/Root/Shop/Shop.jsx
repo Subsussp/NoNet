@@ -102,7 +102,7 @@ const Root = ({userR ,isDarkMode}) => {
     useEffect(()=>{
         window.localStorage.setItem('ref',location.pathname)
       if (window.sessionStorage.binar == 'false') {
-          return navigate('/login')
+          navigate('/login')
       }
       else {
           if (userR == 'admin') {

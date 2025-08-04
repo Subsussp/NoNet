@@ -24,6 +24,7 @@ import Order from 'components/order.jsx';
 import Products from 'pages/control/Products.jsx';
 import Dashboard from 'pages/Dashboard/dashboard.jsx';
 import CheckoutForm from 'pages/proccess/Checkout.jsx';
+import Profile from 'pages/Account/Profile';
 
 const App = () => {
   let {data: itemdata,refetch,isLoading} = useQuery({queryKey:['items'],queryFn:fetchitems})
@@ -74,15 +75,15 @@ const App = () => {
         obj.mode = 'lv'
         window.localStorage.setItem('us-inf',JSON.stringify(obj))
         setDarkMode(false)
-        return
-      }
+      }else{
         let obj = JSON.parse(window.localStorage.getItem('us-inf')) || {}
         obj.mode = 'nv'
         window.localStorage.setItem('us-inf',JSON.stringify(obj))
         setDarkMode(true)
         document.documentElement.style.setProperty("--mainele", "#000");
         document.documentElement.style.setProperty("--one", "#fff");       
-          
+      }
+        
 },[isDarkMode])
   useEffect(() => {
     if (Auth === '') {
