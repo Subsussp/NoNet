@@ -178,7 +178,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             }
                             return <>
                                 <Link
-                                to={Obj.link}
+                                href={Obj.link}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
                                 <span>{Obj.icon}</span>              
