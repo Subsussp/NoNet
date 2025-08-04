@@ -10,7 +10,7 @@ const queryClient = new QueryClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <HashRouter >
+  <HashRouter basename="/Nonet">
     <QueryClientProvider client={queryClient}>
     <ScrollToTop/>
     <App />

@@ -122,7 +122,6 @@ const App = () => {
       {/* <Route path='/' element={<Userpage refetch={refetch} isDarkMode={isDarkMode}/>}/> */}
       <Route path='/items/:id' element={<Getitempage />}/>   
       <Route path='/proccess' element={<CheckoutForm  />}/>       
-      <Route index element={<Root userR={userR} isDarkMode={isDarkMode} />}/>
       
       {/* Protected Routes (Require Authentication) */}
       <Route element={<ProtectedRoutes />}>     
@@ -142,6 +141,7 @@ const App = () => {
             <Route path="/control" element={<Products data={data} refetch={refetch} /> }/>
             <Route path="/admin" element={<Adminpage />} />
             <Route path="/users" element={<Users />} />
+            <Route path='/' element={<Root userR={userR} isDarkMode={isDarkMode} />}/>
           </Route>
         </Route>  
       <Route path='*' element={<Noroute/>}/>

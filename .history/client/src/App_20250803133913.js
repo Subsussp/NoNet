@@ -122,7 +122,7 @@ const App = () => {
       {/* <Route path='/' element={<Userpage refetch={refetch} isDarkMode={isDarkMode}/>}/> */}
       <Route path='/items/:id' element={<Getitempage />}/>   
       <Route path='/proccess' element={<CheckoutForm  />}/>       
-      <Route index element={<Root userR={userR} isDarkMode={isDarkMode} />}/>
+            <Route path='/' element={<Root userR={userR} isDarkMode={isDarkMode} />}/>
       
       {/* Protected Routes (Require Authentication) */}
       <Route element={<ProtectedRoutes />}>     

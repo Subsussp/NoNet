@@ -32,7 +32,7 @@ const allowedOrigins = [
   process.env.FRURL,
   'https://subsussp.github.io/',
   'https://subsussp.github.io/NoNet/',
-  'http://localhost:3000'
+  
 ];
 
 app.use(cors({

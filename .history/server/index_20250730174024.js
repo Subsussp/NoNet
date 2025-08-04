@@ -31,8 +31,7 @@ let sessionmidm = session({
 const allowedOrigins = [
   process.env.FRURL,
   'https://subsussp.github.io/',
-  'https://subsussp.github.io/NoNet/',
-  'http://localhost:3000'
+  'https://subsussp.github.io/NoNet/'
 ];
 
 app.use(cors({
