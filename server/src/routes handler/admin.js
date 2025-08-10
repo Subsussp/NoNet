@@ -1,4 +1,5 @@
 const Router = require('express').Router()
+const { store } = require('../../index.js');
 const Order = require("../models/Order.js");
 const items = require("../models/items.js");
 const Users = require("../models/user.js");
@@ -9,7 +10,17 @@ require('dotenv').config()
 // stats instead of gate
 Router.route('/Gate').get(async function (req,res,next) {
         const totalOrders = await Order.countDocuments();
-        const totalUsers = await Users.countDocuments();
+        const activeSessions = await store.client.db().collection('sessions');
+        const uniqueUserIds = new Set();
+
+        activeSessions.forEach((session) => {
+  // Parse session data - depends on how you store user info inside the session document
+  const sessionData = JSON.parse(session.session); // or session.data depending on your schema
+  if (sessionData.user._id) {
+    uniqueUserIds.add(sessionData.user._id);
+  }
+});
+        const totalUsers = uniqueUserIds.size;
         const last12MonthsSales = await Order.aggregate([
             {
               $match: {
