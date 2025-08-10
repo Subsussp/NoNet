@@ -41,6 +41,14 @@ let patchuser = async function (req,res,next){
         });
     }
     function showprofile(req, res) {
-        res.json(req.session.user);
+         if (!req.session.user) {
+        return res.status(401).json({ error: "Not logged in" });
+        }
+        const { name, email, Phonenumber } = req.session.user;
+        res.json({
+            name,
+            email,
+            Phonenumber
+        });
     }
 module.exports = {patchuser,showprofile,regestier}
