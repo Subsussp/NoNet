@@ -23,8 +23,6 @@ console.log(initialData)
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(data),
-      }).then((res)=> {res.ok ? alert("Profile updated successfully!") :  alert("Error updating profile.")
-        return res
       }).then(async(res)=>await res.json()).then((data)=>setUserData(data.user));
     } catch (err) {
       console.error("Error:", err);

@@ -9,7 +9,7 @@ const menuItems = [
     { icon: <User size={20} />, label: 'Profile' ,link: '/profile'},
     // { icon: <Database size={20} />, label: 'Dashboard',link: '/dashboard' },
     { icon: <LiaShoppingBagSolid size={20} />, label: 'Cart',link: '/cart',require:true},
-    { icon: <Eye size={20} />, label: 'Watchlist',link: '' },
+    // { icon: <Eye size={20} />, label: 'Watchlist',link: '' },
     // { icon: <BoxIcon size={20} />, label: 'Your orders',link: '' },
     
     { icon: <DoorClosed size={20} />, label: 'Logout' ,link: '/logout',require:true},
