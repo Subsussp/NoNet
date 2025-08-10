@@ -1,4 +1,4 @@
-import { useEffect, useState ,createContext, memo, useMemo} from 'react'
+import { useEffect, useState ,createContext, memo, useMemo, useContext, useRef} from 'react'
 import { useLocation, useNavigate,  useParams, useSearchParams } from 'react-router'
 import axios from 'axios';
 import Dashboard from 'pages/Dashboard/dashboard.jsx';
@@ -67,31 +67,143 @@ const Addcart = () => {
   return navigate(redirect, { replace: true }) 
 }
 
+
 const Cart = () => {
-  let {data,isLoading,isError,isFetched,refetch} = useQuery({queryFn:cahce,queryKey:['cart'],enabled:false})
-  let location = useLocation()
+  const data = useContext(Cartcontext);
+  const { isLoading, isError, isFetched, refetch } = useQuery({
+    queryFn: cahce,
+    queryKey: ["cart"],
+    enabled: false,
+  });
+  let [renderhandler,sethandler] = useState(0)
+  const location = useLocation();
+  const updateTimers = useRef({});
+
   useEffect(() => {
-    window.localStorage.setItem('ref',location.pathname)
-  },[])
+    window.localStorage.setItem("ref", location.pathname);
+  }, [location.pathname]);
+
   useEffect(() => {
     if (!isFetched && !data) {
       refetch();
     }
-  }, [isFetched, data, refetch]);
-  if(isLoading | !data){
-    return <></>
+  }, [isFetched, data, refetch,data.data]);
+
+  if (isLoading || !data) {
+    return (
+      <div className="flex justify-center items-center h-48 text-gray-500 text-lg">
+        Loading your cart...
+      </div>
+    );
   }
-  if(isError){
-    return <>Error Loading the page....</>
+
+  if (isError) {
+    return (
+      <div className="text-center text-red-600 font-semibold py-6">
+        Error loading the cart. Please try again.
+      </div>
+    );
   }
-  if(!isLoading && data.data.length < 1){
-    return <>No items in your cart....</>
+
+  if (!isLoading && data.data.length < 1) {
+    return (
+      <div className="text-center text-gray-600 italic py-6">
+        Your cart is empty.
+      </div>
+    );
   }
-    async function HandleDelete() {
-      await refetch()
+
+  async function HandleDelete() {
+    await refetch();
+  }
+ // Update quantity backend call
+    const changeQuantity = (id, newQty) => {
+    if (newQty < 1) return;
+    data.data.forEach( (item)=> {
+      if(item.data._id == id){
+        console.log(item.nun)
+        item.nun = newQty
+        sethandler(renderhandler + 1)
+      }
+    })
+    // Clear previous timer for this item
+    if (updateTimers.current[id]) {
+      clearTimeout(updateTimers.current[id]);
     }
-  return (data.data.map((e)=><>{e.data.name}{e.nun}<Delete Config={{url:`${API_BASEURL}/cart`,config:{id:e.data._id}}} refresh={HandleDelete} id={e.data._id} /><br></br><br></br><br></br></>))
-}
+
+    // Start new timer to update backend after 500ms idle
+    updateTimers.current[id] = setTimeout(() => {
+      updateQuantity(id, newQty);
+      delete updateTimers.current[id];
+    }, 1800);
+  };
+
+  async function updateQuantity(id, newQuantity) {
+    if (newQuantity < 1) return; // Optional: prevent zero or negative qty
+    try {
+      const res = await fetch(`${API_BASEURL}/cart`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ id, quantity: newQuantity }),
+      });
+      if (res.ok) {
+        await refetch();
+      } else {
+        alert("Failed to update quantity.");
+      }
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+    }
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto p-4 space-y-4">
+      {data.data.map((item) => (
+        <div
+          key={item.data._id}
+          className="flex items-center justify-between bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow"
+        >
+          {/* Image */}
+          <img
+            src={item.data.img || "https://via.placeholder.com/80"}
+            alt={item.data.name}
+            className="w-20 h-20 rounded object-cover mr-4"
+          />
+
+          {/* Name and quantity controls */}
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-800">{item.data.name}</h3>
+
+            <div className="flex items-center space-x-3 mt-2">
+              <button
+                onClick={() => changeQuantity(item.data._id, item.nun - 1)}
+                className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                -
+              </button>
+              <span className="text-gray-700 font-medium">{item.nun}</span>
+              <button
+                onClick={() => changeQuantity(item.data._id, item.nun + 1)}
+                className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Delete button */}
+          <Delete
+            Config={{ url: `${API_BASEURL}/cart`, config: { id: item.data._id } }}
+            refresh={HandleDelete}
+            id={item.data._id}
+            className="ml-4"
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const Root = ({userR ,isDarkMode}) => {
     let navigate = useNavigate()

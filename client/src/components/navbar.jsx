@@ -122,8 +122,26 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             if(Obj.require && !userR){
                                 return 
                             }
+                            if(Obj.label == 'Cart'){
+                                return 
+                            }
                             if(Obj.admin && userR != 'admin'){
                                 return 
+                            }  if(Obj.href){
+                                return  <a
+                                href={Obj.href}
+                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
+                                <span className="flex-1">{Obj.label}</span>
+                                <span>{Obj.icon}</span>              
+                                    {Obj.suffix &&  (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
+                                    {Obj.toggle && (
+                                        <button onClick={changeTheme}>
+                                            <div className={`w-10 h-6 rounded-full p-1 ${isDarkMode ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                                            <div className={`w-4 h-4 rounded-full bg-white transform transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                                        </div>
+                                        </button>
+                                    )}
+                                </a>
                             }
                             return <li key={index} onClick={() => Obj.link && navigate(`${Obj.link}`)}  className="w-full cursor-pointer flex w-full items-center space-x-3 px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems hover:text-mainele">
                                     <span >{Obj.icon}</span>
@@ -176,9 +194,26 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             if(Obj.admin && userR != 'admin'){
                                 return 
                             }
+                            if(Obj.href){
+                                return  <a
+                                href={Obj.href}
+                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
+                                <span className="flex-1">{Obj.label}</span>
+                                <span>{Obj.icon}</span>              
+                                    {Obj.suffix &&  (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
+                                    {Obj.toggle && (
+                                        <button onClick={changeTheme}>
+                                            <div className={`w-10 h-6 rounded-full p-1 ${isDarkMode ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                                            <div className={`w-4 h-4 rounded-full bg-white transform transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                                        </div>
+                                        </button>
+                                    )}
+                                </a>
+                            }
                             return <>
                                 <Link
                                 to={Obj.link}
+                                onClick={()=>setShow(!showList)}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
                                 <span>{Obj.icon}</span>              

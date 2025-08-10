@@ -79,13 +79,12 @@ const Dashboard = ({ refetch }) => {
     useEffect(() => {
         setItems(data); // Store raw data
     }, [data]);
-        // Toggle form visibility
         function toggleForm() {
             setShowForm(!showForm);
         }
-        // Delete item and then refetch
+
         async function refresh() {
-            await refetch(); // Ensure the latest data is fetched
+            await refetch(); 
         }
         return (
             <>

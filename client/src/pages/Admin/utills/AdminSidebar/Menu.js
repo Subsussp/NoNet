@@ -13,7 +13,7 @@ let navItems = [
     { icon: <Package className='text-dropicons' size={20} />, label: 'Products' ,href: '/control' },
     { icon: <Users className='text-dropicons' size={20} />, label: 'Users' ,href: '/users' },
     { icon: <BarChart2 className='text-dropicons' size={20} />, label: 'Analytics' ,href: '/analytics' },
-    { icon: <Settings className='text-dropicons' size={20} />, label: 'Settings' ,href: '/Setting' },
+    // { icon: <Settings className='text-dropicons' size={20} />, label: 'Settings' ,href: '/Setting' },
   ];
 
 export default navItems

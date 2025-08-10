@@ -84,8 +84,8 @@ const Adminpage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
               { label: 'Total Revenue', value: Revenue, change: '+12%' },
-              { label: 'Active Users', value: ActiveUsers, change: '+8%' },
-              { label: 'New Orders', value: '145', change: '+24%' },
+              { label: 'Total Users', value: ActiveUsers, change: '+8%' },
+              { label: 'New Orders', value: '1', change: '+24%' },
               { label: 'Total Orders', value: Orders, change: '+24%' },
               { label: 'Conversion Rate', value: '3.2%', change: '+2%' }
             ].map((stat, index) => (

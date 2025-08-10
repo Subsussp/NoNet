@@ -48,7 +48,8 @@ const Userpage = ({refetch}) => {
         <article className="Mid"><h2>Store</h2></article>
         {/* <h1 className="text-one ml-2 p-3 text-[length:var(--thirdegreesize2)]">Shop By Category</h1> */}
         {/* <HorizontalScrollCarousel Catg={Catg} smallsize={smallsize} refetch={refetch}/> */}
-        <Store smallsize={smallsize} Catg={Catg} BestSellerAndMain={true}/>
+        {/* <Store smallsize={smallsize} Catg={Catg} BestSellerAndMain={true}/> */}
+        <Store smallsize={smallsize} BestSellerAndMain={false} Catg={!data ? [] : data.map((value)=>value.catg)} />
                 {/* <div className={`flex flex-row w-full p-4 bg-mainele catsection`}> */}
                 {/* <select
                 value={selectedCategory}
@@ -70,9 +71,11 @@ const Userpage = ({refetch}) => {
     )
 }
 const Store = ({smallsize,Catg,BestSellerAndMain}) =>{
+  
   const categories = [...new Set(Catg)];
   const [selectedCategory, setSelectedCategory] = useState([]); // Store raw data, not JSX
   const [gridlist, setGrid] = useState([true,false]); // Store raw data, not JSX
+  const [direction, setdirection] = useState(false);
   let location = useLocation()
   useEffect(()=>{
     window.localStorage.setItem('ref',location.pathname)
@@ -118,13 +121,13 @@ const Store = ({smallsize,Catg,BestSellerAndMain}) =>{
     {!BestSellerAndMain && <div className="flex flex-row justify-evenly w-[150px] my-[20px] py-1 bg-[var(--sa)]">
       <button onClick={()=>setGrid([true,false])} data-view="grid" data-toggle="tooltip" data-original-title="Grid"><LayoutGrid size={28} style={{'color':"var(--one)"}} /></button>
       <button onClick={()=>setGrid([false,true])} data-view="list" data-toggle="tooltip" data-original-title="List"><AlignJustify size={28} style={{'color':"var(--one)"}}/> </button>      
-      <button ><ArrowUpNarrowWide size={28} style={{'color':"var(--one)"}}/></button>
-      <button ><ArrowDownNarrowWide size={28} style={{'color':"var(--one)"}}/></button>
+      <button onClick={()=>setdirection(false)} ><ArrowUpNarrowWide size={28} style={{'color':"var(--one)"}}/></button>
+      <button onClick={()=>setdirection(true)}><ArrowDownNarrowWide size={28} style={{'color':"var(--one)"}}/></button>
     </div>}
     {BestSellerAndMain ?
                 Catg.slice(0, 2).map((catg)=><> <div className="group">
                     <h2 className="catgroup">{catg}</h2>
-                    </div><List smallsize={smallsize} Catg={catg} /> </>) : (gridlist[0] ? (selectedCategory.length > 0 ? <List smallsize={smallsize} Catg={selectedCategory}  />: <List smallsize={smallsize} />): (selectedCategory.length > 0 ? <Vlist smallsize={smallsize} Catg={selectedCategory}  />: <Vlist smallsize={smallsize} />))}
+                    </div><List smallsize={smallsize} Catg={catg} /> </>) : (gridlist[0] ? (selectedCategory.length > 0 ? <List smallsize={smallsize} Catg={selectedCategory} direction={direction} />: <List smallsize={smallsize} direction={direction} />): (selectedCategory.length > 0 ? <Vlist smallsize={smallsize} Catg={selectedCategory}direction={direction} />: <Vlist smallsize={smallsize} direction={direction} />))}
     </div> 
   </div>
 }
@@ -146,28 +149,28 @@ const Vitem = ({item})=> {
             <h1 className="font-medium text-one">{item.name}</h1>
             <h1 className="font-medium text-[var(--two)]">{item.price} EGP</h1>
           <Link to={`/items/${item._id}`}>
-            <p class="m-0 p-0 box-border">
-              <span class="text-[var(--sa)] font-sans text-xl">
-                <strong class="font-Main text-gray-500 font-semibold">Material :</strong> {item.material}
+            <p className="m-0 p-0 box-border">
+              <span className="text-[var(--sa)] font-sans text-xl">
+                <strong className="font-Main text-gray-500 font-semibold">Material :</strong> {item.material}
               </span>
             </p>
-        <p class="m-0 p-0 box-border ">
-          <span class=" font-sans text-[var(--sa)] text-lg">
-            <strong class="font-sm text-gray-500 overflow-hidden text-ellipsis w-full font-Main font-semibold">Details :</strong> {item.desc}
+        <p className="m-0 p-0 box-border ">
+          <span className=" font-sans text-[var(--sa)] text-lg">
+            <strong className="font-sm text-gray-500 overflow-hidden text-ellipsis w-full font-Main font-semibold">Details :</strong> {item.desc}
           </span>
         </p>
-        <p class="m-0 p-0 box-border">
-          <span class="text-[var(--sa)] font-sans text-xl">
-            <strong class="font-Main text-gray-500 font-semibold ">Size :</strong> {item.size}
+        <p className="m-0 p-0 box-border">
+          <span className="text-[var(--sa)] font-sans text-xl">
+            <strong className="font-Main text-gray-500 font-semibold ">Size :</strong> {item.size}
           </span>
         </p>
         </Link>
 
         <div>&nbsp;</div>
-        <div class="list-block flex items-center space-x-2">
+        <div className="list-block flex items-center space-x-2">
   {/* <!-- Add to Cart Button --> */}
   <Link 
-    class="addToCart bg-two hover:bg-[var(--sa)] text-one transition duration-700 ease-in-out p-2" 
+    className="addToCart bg-two hover:bg-[var(--sa)] text-one transition duration-700 ease-in-out p-2" 
     type="button" 
     title="Add to Cart" 
     to={`/cart/add-to-cart?pr_id=${item._id}`}
@@ -177,20 +180,20 @@ const Vitem = ({item})=> {
 
   {/* <!-- Add to Wishlist Button --> */}
   <button 
-    class="wishlist btn-button bg-mainele transition duration-700 ease-in-out hover:bg-one hover:text-mainele text-one p-2" 
+    className="wishlist btn-button bg-mainele transition duration-700 ease-in-out hover:bg-one hover:text-mainele text-one p-2" 
     type="button" 
     title="Add to Wish List" 
-    onclick="wishlist.add('841','image/products/1569664820web-template.png');">
+    onClick="wishlist.add('841','image/products/1569664820web-template.png');">
     <Heart/>
   </button>
 
   {/* <!-- Quick View Button (Using Fancybox) --> */}
   <a 
-    class="iframe-link btn-button bg-mainele transition duration-700 ease-in-out hover:bg-two text-one p-2" 
+    className="iframe-link btn-button bg-mainele transition duration-700 ease-in-out hover:bg-two text-one p-2" 
     href="q?id=841" 
     title="Quick view" 
     data-fancybox-type="iframe">
-    <i class="fa fa-eye"></i>
+    <i className="fa fa-eye"></i>
   </a>
 </div>
       </div>
@@ -198,12 +201,20 @@ const Vitem = ({item})=> {
 
 </li>
 }
-const Vlist = ({role,deletefromlist,Catg})=> {
+const Vlist = ({role,deletefromlist,Catg,direction})=> {
   let data = useContext(Shopcontext)
   if(!data){
       return
   }
   let items = data 
+    items.sort((a, b) => {
+  const firstA = a.name[0].toLowerCase();
+  const firstB = b.name[0].toLowerCase();
+
+  if (firstA < firstB) return -1;
+  if (firstA > firstB) return 1;
+  return 0;
+});
   let i;
   if(Catg){
       if(Array.isArray(Catg)){
@@ -213,6 +224,10 @@ const Vlist = ({role,deletefromlist,Catg})=> {
       }
   }else{
       i = items.map((item) => <Vitem deletefromlist={deletefromlist} role={role == 'admin'} item={item} key={item._id} />)
+  }
+
+  if(direction){
+        i.reverse()
   }
   return <div className={`block w-full h-full`}> {(i != '' ) ? <>{i}</> : <h1>No Products</h1>}</div>
 }

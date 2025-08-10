@@ -14,7 +14,7 @@ const menuItems = [
     
     { icon: <DoorClosed size={20} />, label: 'Logout' ,link: '/logout',require:true},
     { divider: true },
-    { icon: <Settings size={20} />, label: 'Settings' ,link: '/Settings'},
+    // { icon: <Settings size={20} />, label: 'Settings' ,link: '/Settings'},
     // { icon: <Globe2 size={20}/>, label: 'Language', suffix: 'en >',link: '' },
     { 
       icon: <Moon size={20} className='text-two' />, 
@@ -22,9 +22,9 @@ const menuItems = [
       toggle: true
     },
     { divider: true },
-    { icon: <GraduationCap size={20} />, label: 'Learn' ,link: ''},
-    { icon: <HelpCircle size={20} />, label: 'Help center' ,link: ''},
-    { icon: <LifeBuoy size={20} />, label: 'Support',link: ''}
+    // { icon: <GraduationCap size={20} />, label: 'Learn' ,link: ''},
+    // { icon: <HelpCircle size={20} />, label: 'Help center' ,href: ''},
+    { icon: <LifeBuoy size={20} />, label: 'Support', href: 'https://api.whatsapp.com/send?phone=01091244232'}
   ];
 
 export default menuItems

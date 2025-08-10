@@ -37,7 +37,7 @@ const App = () => {
   const location = useLocation(); // Get current path
   const [smallsizw, setsmallsizw] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
-
+  const [userData, setUserData] = useState(null);
   useEffect(() => {
     document.fonts.ready.then(() => {
       setFontsLoaded(true);
@@ -96,6 +96,17 @@ const App = () => {
       })  
     }
   } ,[Auth])
+     useEffect(() => {
+    if(Auth && userR){
+      fetch(`${API_BASEURL}/profile`, {
+        credentials: "include", // Important for session cookies
+      })
+      .then((res) => res.json())
+      .then((data) => setUserData(data) )
+      .catch((err) => console.error("Error fetching profile:", err));
+    }
+    }, [Auth]);
+
   if(!fontsLoaded){
     return (
       <div className="flex items-center justify-center h-screen text-lg">
@@ -120,23 +131,27 @@ const App = () => {
       {/* Public Routes */}
       <Route path='/login' element={<Account setAuth={setAuth} setuserR={setuserR} login={true} />}/>
       <Route path='/signup' element={<Account login={false} />}/>
-      {/* <Route path='/' element={<Userpage refetch={refetch} isDarkMode={isDarkMode}/>}/> */}
+      <Route index element={<Userpage refetch={refetch} isDarkMode={isDarkMode}/>}/>
       <Route path='/items/:id' element={<Getitempage />}/>   
       <Route path='/proccess' element={<CheckoutForm  />}/>       
-      <Route index element={<Root userR={userR} isDarkMode={isDarkMode} />}/>
+      {/* <Route index element={<Root userR={userR} isDarkMode={isDarkMode} />}/> */}
       
       {/* Protected Routes (Require Authentication) */}
-      <Route element={<ProtectedRoutes />}>     
-        {/* <Route path='/profile' element={<Profile />}/>        */}
+      <Route element={<ProtectedRoutes/>}>     
+        <Route path='/profile' element={
+      userData ? <Profile initialData={userData} setUserData={setUserData} /> : <div>Loading...</div>
+    }/>       
         <Route path='/cart' element={<Cart />}/>       
         <Route path='/logout' element={<Logout setAuth={setAuth} setuserR={setuserR} />} />
         <Route path='/cart/add-to-cart' element={<Addcart />}/>       
         <Route path='/store' element={<Store smallsize={smallsizw} BestSellerAndMain={false} Catg={!data ? [] : data.map((value)=>value.catg)} />}/>
       </Route>
+
       {/* Private Routes (Require Specific Role/User Access) */}
+
         <Route element={<PrivateRoutes userR={userR}/>}>
             <Route element={                  
-              <Maincontentwraper userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />                  }>
+            <Maincontentwraper userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />                  }>
             <Route path="/dashboard" element={<Dashboard refetch={refetch}/>} />
             <Route path="/orders" element={<Order />} />
             <Route path="/analytics" /> 
