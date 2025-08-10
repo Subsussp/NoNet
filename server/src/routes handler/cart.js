@@ -53,7 +53,7 @@ Router.route('/').get(isAuth ,async function (req,res,next) {
     } catch (error) {
         res.sendStatus(400)
     }
-}).patch(isAdmin,async (req, res) => {
+}).patch(isAuth,async (req, res) => {
  try {
     const userId = req.session.user._id;
     const { id: itemId, quantity } = req.body;
