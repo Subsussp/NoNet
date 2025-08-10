@@ -55,37 +55,33 @@ Router.route('/').get(isAuth ,async function (req,res,next) {
         res.sendStatus(400)
     }
 }).patch(isAuth,async (req, res) => {
-try {
-  const userId = req.session.user._id;
-  const { id: itemId, quantity } = req.body;
+  try {
+    const userId = req.session.user._id;
+    const finid = new mongoose.Types.ObjectId(req.body.id);
+    const quantity = req.body.quantity;
 
-  if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res.status(400).json({ error: "Invalid item ID" });
-  }
-  if (typeof quantity !== "number" || quantity < 1) {
-    return res.status(400).json({ error: "Quantity must be a positive number" });
-  }
-
-    const objectItemId = mongoose.Types.ObjectId(itemId);
+    if (typeof quantity !== "number" || quantity < 1) {
+      return res.status(400).json({ error: "Quantity must be a positive number" });
+    }
 
     const result = await users.updateOne(
-    { _id: userId, "cart.id": objectItemId },
-    { $set: { "cart.$.m": quantity } }
+      { _id: userId, "cart.id": finid },
+      { $set: { "cart.$.m": quantity } }
     );
 
-  if (result.nModified === 0) {
-    return res.status(404).json({ error: "Item not found in cart or no change" });
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: "Item not found or quantity not changed" });
+    }
+
+    // Optionally update session cart to stay in sync
+    const user = await users.findById(userId);
+    req.session.user.cart = user.cart;
+
+    res.json({ message: "Cart quantity updated", cart: user.cart });
+  } catch (err) {
+    console.error("PATCH /cart error:", err);
+    res.status(500).json({ error: "Server error" });
   }
-
-  // Optionally, fetch updated user cart to send back
-  const updatedUser = await users.findById(userId);
-  req.session.user.cart = updatedUser.cart;
-
-  res.json({ message: "Cart quantity updated", cart: updatedUser.cart });
-} catch (err) {
-  console.error("PATCH /cart error:", err);
-  res.status(500).json({ error: "Server error" });
-}
 })
 
 module.exports = Router
