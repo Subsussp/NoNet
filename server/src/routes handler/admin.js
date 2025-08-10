@@ -1,4 +1,5 @@
 const Router = require('express').Router()
+const { connection } = require('mongoose');
 const Order = require("../models/Order.js");
 const items = require("../models/items.js");
 const Users = require("../models/user.js");
@@ -9,7 +10,7 @@ require('dotenv').config()
 // stats instead of gate
 Router.route('/Gate').get(async function (req,res,next) {
         const totalOrders = await Order.countDocuments();
-        const activeSessions = await Order.db.collection('sessions').countDocuments();
+        const activeSessions = await connection.db.collection('sessions').countDocuments();
         const uniqueUserIds = new Set();
 activeSessions.forEach((session) => {
   // Parse session data - depends on how you store user info inside the session document
