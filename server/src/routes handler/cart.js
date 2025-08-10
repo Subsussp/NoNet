@@ -66,11 +66,12 @@ try {
     return res.status(400).json({ error: "Quantity must be a positive number" });
   }
 
-  // Update cart item quantity directly in DB
-  const result = await users.updateOne(
-    { _id: userId, "cart.id": itemId },
+    const objectItemId = mongoose.Types.ObjectId(itemId);
+
+    const result = await users.updateOne(
+    { _id: userId, "cart.id": objectItemId },
     { $set: { "cart.$.m": quantity } }
-  );
+    );
 
   if (result.nModified === 0) {
     return res.status(404).json({ error: "Item not found in cart or no change" });
