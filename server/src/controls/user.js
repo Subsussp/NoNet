@@ -44,11 +44,12 @@ let patchuser = async function (req,res,next){
          if (!req.session.user) {
         return res.status(401).json({ error: "Not logged in" });
         }
-        const { name, email, Phonenumber } = req.session.user;
+        const { name, email, Phonenumber,url} = req.session.user;
         res.json({
             name,
             email,
-            Phonenumber
+            Phonenumber,
+            url
         });
     }
 module.exports = {patchuser,showprofile,regestier}

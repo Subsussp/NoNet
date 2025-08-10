@@ -53,7 +53,41 @@ Router.route('/').get(isAuth ,async function (req,res,next) {
     } catch (error) {
         res.sendStatus(400)
     }
-    
-}).patch(isAdmin)
+}).patch(isAdmin,async (req, res) => {
+ try {
+    const userId = req.session.user._id;
+    const { id: itemId, quantity } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      return res.status(400).json({ error: "Invalid item ID" });
+    }
+    if (typeof quantity !== "number" || quantity < 1) {
+      return res.status(400).json({ error: "Quantity must be a positive number" });
+    }
+
+    // Find user
+    const user = await users.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Find cart item
+    const foundIndex = user.cart.findIndex((e) => e.id.toString() === itemId);
+    if (foundIndex === -1) {
+      return res.status(404).json({ error: "Item not found in cart" });
+    }
+
+    // Update quantity (m)
+    user.cart[foundIndex].m = quantity;
+
+    await user.save();
+
+    // Update session cart
+    req.session.user.cart = user.cart;
+
+    res.json({ message: "Cart quantity updated", cart: user.cart });
+  } catch (err) {
+    console.error("PATCH /cart error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+  })
 
 module.exports = Router
