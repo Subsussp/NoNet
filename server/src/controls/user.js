@@ -34,10 +34,11 @@ let patchuser = async function (req,res,next){
         }}
         let upuser = await users.findOneAndUpdate({_id:req.session.user._id},{$set: newfields},{new:true}).then((usero) =>{ req.session.user = usero 
             return usero})
-    
+        req.session.user = upuser
+        const { name, email, Phonenumber,url} = upuser;  
         return res.json({
             message: "Profile updated successfully",
-            user: upuser
+            user: {name, email, Phonenumber,url}
         });
     }
     function showprofile(req, res) {
