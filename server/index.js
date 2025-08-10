@@ -49,8 +49,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ limit: '10mb' , extended: false }));
+app.use(express.json({ limit: '10mb' }));
 cloudinary.config({
   cloud_name: "dydefecdm",
   api_key: "952224597234553",
