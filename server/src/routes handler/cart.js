@@ -30,7 +30,8 @@ Router.route('/add-to-cart').get(isAuth,async function (req,res,next) {
 })
 async function gets(id,inder) {
     let obj = await getiteml(id)
-    return {data: obj ,nun:inder}  
+    let {catg,desc,name,price,_id,material} = obj
+    return {data:{ catg, desc, name, price, _id ,material},nun:inder}  
 }
 Router.route('/').get(isAuth ,async function (req,res,next) {
     let user = await users.findOne({_id:req.session.user._id})
