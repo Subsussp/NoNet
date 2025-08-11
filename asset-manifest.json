@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/NoNet/static/css/main.bff7f9f5.css",
-    "main.js": "/NoNet/static/js/main.4b41794b.js",
+    "main.css": "/NoNet/static/css/main.50ba6950.css",
+    "main.js": "/NoNet/static/js/main.97d3bc21.js",
     "static/js/453.258b012d.chunk.js": "/NoNet/static/js/453.258b012d.chunk.js",
     "static/media/Poppins-ThinItalic.ttf": "/NoNet/static/media/Poppins-ThinItalic.9d5e661e645ce9a32fe6.ttf",
     "static/media/Poppins-ExtraLightItalic.ttf": "/NoNet/static/media/Poppins-ExtraLightItalic.dbdfd398abcbbafc022b.ttf",
@@ -26,12 +26,12 @@
     "static/media/Baltidore-p7eEO.ttf": "/NoNet/static/media/Baltidore-p7eEO.4eaf9ef1ae03dd32a727.ttf",
     "static/media/TCCB.TTF": "/NoNet/static/media/TCCB.e8faa1eb0bf755520743.TTF",
     "index.html": "/NoNet/index.html",
-    "main.bff7f9f5.css.map": "/NoNet/static/css/main.bff7f9f5.css.map",
-    "main.4b41794b.js.map": "/NoNet/static/js/main.4b41794b.js.map",
+    "main.50ba6950.css.map": "/NoNet/static/css/main.50ba6950.css.map",
+    "main.97d3bc21.js.map": "/NoNet/static/js/main.97d3bc21.js.map",
     "453.258b012d.chunk.js.map": "/NoNet/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bff7f9f5.css",
-    "static/js/main.4b41794b.js"
+    "static/css/main.50ba6950.css",
+    "static/js/main.97d3bc21.js"
   ]
 }
