@@ -51,10 +51,10 @@ const Addcart = () => {
   const id = searchParams.get("pr_id")
   const redirect = window.localStorage.getItem('ref')
   let {data,isFetching} = useQuery({
-    queryFn: cahce, // Ensure that 'cache' properly returns cached data if it exists
+    queryFn: cahce, 
     queryKey: ['cart'],
     enabled: !loading,
-    refetchOnWindowFocus: false, // Disable refetch when window refocuses (optional)
+    refetchOnWindowFocus: false,
   });
   useEffect(()=>{
     addtocart(id).then(()=>{
@@ -69,14 +69,15 @@ const Addcart = () => {
 
 
 const Cart = () => {
-  const data = useContext(Cartcontext);
+  const {cartdata:data,refetchcart} = useContext(Cartcontext);
   const { isLoading, isError, isFetched, refetch } = useQuery({
     queryFn: cahce,
     queryKey: ["cart"],
     enabled: false,
   });
-  let [renderhandler,sethandler] = useState(0)
+  let [renderhandler, sethandler] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate(); 
   const updateTimers = useRef({});
 
   useEffect(() => {
@@ -87,7 +88,7 @@ const Cart = () => {
     if (!isFetched && !data) {
       refetch();
     }
-  }, [isFetched, data, refetch,data.data]);
+  }, [isFetched, data, refetch, data?.data]);
 
   if (isLoading || !data) {
     return (
@@ -105,7 +106,7 @@ const Cart = () => {
     );
   }
 
-  if (!isLoading && data.data.length < 1) {
+  if (!isLoading && data?.data?.length < 1) {
     return (
       <div className="text-center text-gray-600 italic py-6">
         Your cart is empty.
@@ -116,30 +117,27 @@ const Cart = () => {
   async function HandleDelete() {
     await refetch();
   }
- // Update quantity backend call
-    const changeQuantity = (id, newQty) => {
+
+  const changeQuantity = (id, newQty) => {
     if (newQty < 1) return;
-    data.data.forEach( (item)=> {
-      if(item.data._id == id){
-        console.log(item.nun)
-        item.nun = newQty
-        sethandler(renderhandler + 1)
+    data.data.forEach((item) => {
+      if (item.data._id === id) {
+        item.nun = newQty;
+        sethandler(renderhandler + 1);
       }
-    })
-    // Clear previous timer for this item
+    });
+
     if (updateTimers.current[id]) {
       clearTimeout(updateTimers.current[id]);
     }
 
-    // Start new timer to update backend after 500ms idle
     updateTimers.current[id] = setTimeout(() => {
       updateQuantity(id, newQty);
       delete updateTimers.current[id];
     }, 1800);
   };
-
   async function updateQuantity(id, newQuantity) {
-    if (newQuantity < 1) return; // Optional: prevent zero or negative qty
+    if (newQuantity < 1) return;
     try {
       const res = await fetch(`${API_BASEURL}/cart`, {
         method: "PATCH",
@@ -157,6 +155,10 @@ const Cart = () => {
     }
   }
 
+  const handleOrderNow = () => {
+    navigate("/process");
+  };
+
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4">
       {data.data.map((item) => (
@@ -164,14 +166,12 @@ const Cart = () => {
           key={item.data._id}
           className="flex items-center justify-between bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow"
         >
-          {/* Image */}
           <img
-            src={item.data.img || "https://via.placeholder.com/80"}
+            src={item.data.img[0] || "https://via.placeholder.com/80"}
             alt={item.data.name}
             className="w-20 h-20 rounded object-cover mr-4"
           />
 
-          {/* Name and quantity controls */}
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-gray-800">{item.data.name}</h3>
 
@@ -192,7 +192,6 @@ const Cart = () => {
             </div>
           </div>
 
-          {/* Delete button */}
           <Delete
             Config={{ url: `${API_BASEURL}/cart`, config: { id: item.data._id } }}
             refresh={HandleDelete}
@@ -201,6 +200,16 @@ const Cart = () => {
           />
         </div>
       ))}
+
+      {/* Order Now Button */}
+      <div className="text-center mt-6">
+        <button
+          onClick={handleOrderNow}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Order Now
+        </button>
+      </div>
     </div>
   );
 };

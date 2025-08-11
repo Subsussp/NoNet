@@ -8,30 +8,81 @@ const Users = require("../models/user.js");
 require('dotenv').config()
 // stats instead of gate
 Router.route('/Gate').get(async function (req,res,next) {
-        const totalOrders = await Order.countDocuments();
+        const Orders = await Order.find();
         const totalUsers = await Users.countDocuments();
-        const last12MonthsSales = await Order.aggregate([
-            {
-              $match: {
-                createdAt: {
-                  $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) // Last 12 months
-                }
-              }
-            },
-            {
-              $group: {
-                _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, // Group by year-month
-                totalSales: { $sum: "$totalPrice" }, // Sum of totalPrice
-                orderCount: { $sum: 1 } // Count of orders
-              }
-            },
-            { $sort: { _id: 1 } } // Sort by month
-          ]);
-        const totalRevenue = await Order.aggregate([{ $group: { _id: null, total: { $sum: "$amount" } } }]);
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const startOfYesterday = new Date(startOfToday);
+        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+        const twoWeeksAgo = new Date(startOfToday);
+        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+        const startOfDayBeforeYesterday = new Date(startOfYesterday);
+        startOfDayBeforeYesterday.setDate(startOfDayBeforeYesterday.getDate() - 1);
+
+        // Total Orders
+        const totalOrders = await Order.countDocuments();
+
+      // Total Orders from two weeks ago
+      const totalOrdersTwoWeeksAgo = await Order.countDocuments({
+        createdAt: { $lt: twoWeeksAgo }
+      });
+
+        // Total Users
+        const totalUsersYesterday = await Users.countDocuments({
+          createdAt: { $lt: startOfToday }
+        });
+
+        const calcChange = (today, yesterday) => {
+          if (yesterday === 0) return today > 0 ? 100 : 0;
+          return (((today - yesterday) / yesterday) * 100).toFixed(2);
+        };
+
+const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+      const startOfWeek = new Date();
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Start on Sunday
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      const last7DaysSales = await Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: startOfWeek }
+          }
+        },
+        {
+          $group: {
+            _id: { $dayOfWeek: "$createdAt" }, // 1 = Sunday, 7 = Saturday
+            totalSales: { $sum: "$totalAmount" },
+            orderCount: { $sum: 1 }
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ]);
+
+      // Build array with all 7 days, filling missing days with zeros
+      const salesByDay = Array(7).fill(null).map((_, index) => ({
+        day: dayNames[index],
+        totalSales: 0,
+        orderCount: 0
+      }));
+
+      last7DaysSales.forEach(day => {
+        salesByDay[day._id - 1] = {
+          day: dayNames[day._id - 1],
+          totalSales: day.totalSales,
+          orderCount: day.orderCount
+        };
+      });
+
+        const totalRevenue = await Order.aggregate([{ $group: { _id: null, total: { $sum: "$totalAmount" } } }]);
         res.json({
-          totalOrders,
-          last12MonthsSales,
+          Orders,
+          totalOrdersChange: calcChange(totalOrders, totalOrdersTwoWeeksAgo),
+          salesByDay,
           totalUsers,
+          totalUsersChange: calcChange(totalUsers, totalUsersYesterday),
           totalRevenue: totalRevenue[0]?.total || 0
         });
 })

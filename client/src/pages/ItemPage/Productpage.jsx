@@ -29,7 +29,7 @@ export default function ProductPage({data,refe}) {
                 <div>
                 <div className="Color">
                     <h3>Colors</h3>
-                    {colors.map((color)=><span onClick={()=>alert('sfhsdag')} style={{'width':'40px','height':'40px','backgroundColor':`${color}`,'borderRadius':'50%'}}></span>)}
+                    {colors.map((color)=><span key={color} onClick={()=>alert(color)} style={{'width':'40px','height':'40px','backgroundColor':`${color}`,'borderRadius':'50%'}}></span>)}
                 </div>
                 <div className="Description">
                     <h1>Description</h1>

@@ -34,7 +34,6 @@ const List = ({role,refetch,Catg,limit,smallsize,direction}) => {
         await refetch()
         return (<div className={`${smallsize ? 'itm-con-mb' : 'itm-con'}`}> {(s != '' ) ? <>{s}</> : <h1>No Products</h1>} </div>)
     }
-    console.log(direction)
     if(direction){
         i.reverse()
     }

@@ -23,15 +23,15 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
     useEffect(() => {
         const handleResize = () => {
           if(window.innerWidth <= 768){
-              setIsVisible(true); // Show only if less than md
+              setIsVisible(true); 
               setsmallsizw(true)
           }else{
-              setIsVisible(false); // Show only if more than md
+              setIsVisible(false); 
               setsmallsizw(false)
           }
         };
     
-        handleResize(); // Run once on mount
+        handleResize(); 
         window.addEventListener("resize", handleResize);
     
         return () => window.removeEventListener("resize", handleResize);
@@ -59,7 +59,7 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
                 </div></>:
                 <> 
                 </>}
-            <div id="tk" on onMouseOut={()=>setIsOpen(false)} onMouseOver={()=>setIsOpen(true)}>
+            <div id="tk" onMouseOut={()=>setIsOpen(false)} onMouseOver={()=>setIsOpen(true)}>
                  <li style={{'cursor':'pointer'}} className="text-one no-underline cursor-pointer text-interactive-primary hover:text-interactive-primary-hover disabled:pointer-events-none disabled:opacity-40 sc-28e98bbc-0 CrMKY ml-3 flex items-center justify-center" 
                                     onClick={()=>setShow(!showList)}
                                     >
@@ -119,7 +119,7 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
             </div>
         }       
              {(showList && smallsizw) && 
-        <div className={`block bg- shadow-lg fixed top-0 left-0 w-screen h-screen z-50`}>
+        <div className={`block bg- shadow-lg fixed top-0 left-0 w-screen h-screen `}>
             <div className="px-2 pt-2 pb-3 space-y-1 bg-mainele sm:px-3  h-screen  w-[100vw] flex items-center flex-col overflow-y-auto">
             <button
                 onClick={()=>{
@@ -131,10 +131,9 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
                             }
                             if(Obj.require && !userR){
                                 return 
-                            }
-                            return <>
-                                <a
-                                href={Obj.link}
+                            }if(Obj.href){
+                                return    <Link
+                                onClick={()=> window.location.href = Obj.href}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
                                 <span>{Obj.icon}</span>              
@@ -146,7 +145,23 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
                                         </div>
                                         </button>
                                     )}
-                                </a>
+                                </Link>
+                            }
+                            return <>
+                                <Link
+                                to={Obj.link}
+                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
+                                <span className="flex-1">{Obj.label}</span>
+                                <span>{Obj.icon}</span>              
+                                    {Obj.suffix &&  (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
+                                    {Obj.toggle && (
+                                        <button onClick={changeTheme}>
+                                            <div className={`w-10 h-6 rounded-full p-1 ${isDarkMode ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                                            <div className={`w-4 h-4 rounded-full bg-white transform transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                                        </div>
+                                        </button>
+                                    )}
+                                </Link>
                             </>
                         })}
         </div>

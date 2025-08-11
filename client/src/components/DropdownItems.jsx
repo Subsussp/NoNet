@@ -5,7 +5,7 @@ import { FaMoneyBill } from "react-icons/fa";
 const menuItems = [
   { icon: <Command size={20} />, label: 'Admin',link: '/admin' ,admin:true},
   { icon: <BoxIcon size={20} />, label: 'Your Inventory',link: '/control',admin:true},
-  { icon: <FaMoneyBill size={20} />, label: 'Place Order' ,link: '/proccess'},
+  { icon: <FaMoneyBill size={20} />, label: 'Place Order' ,link: '/process'},
     { icon: <User size={20} />, label: 'Profile' ,link: '/profile'},
     // { icon: <Database size={20} />, label: 'Dashboard',link: '/dashboard' },
     { icon: <LiaShoppingBagSolid size={20} />, label: 'Cart',link: '/cart',require:true},
@@ -24,7 +24,7 @@ const menuItems = [
     { divider: true },
     // { icon: <GraduationCap size={20} />, label: 'Learn' ,link: ''},
     // { icon: <HelpCircle size={20} />, label: 'Help center' ,href: ''},
-    { icon: <LifeBuoy size={20} />, label: 'Support', href: 'https://api.whatsapp.com/send?phone=01091244232'}
+    { icon: <LifeBuoy size={20} />, label: 'Support', href: 'https://api.whatsapp.com/send?phone=2001091244232'}
   ];
 
 export default menuItems

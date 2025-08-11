@@ -15,12 +15,12 @@ const Userpage = ({refetch}) => {
     useEffect(() => {
         const handleResize = () => {
         if(window.innerWidth <= 768){
-          setsmallsizw(true)// Show only if less than md
+          setsmallsizw(true)
         }else{
-          setsmallsizw(false)// Show only if more than md
+          setsmallsizw(false)
         }
       };
-      handleResize(); // Run once on mount
+      handleResize(); 
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -46,23 +46,7 @@ const Userpage = ({refetch}) => {
         {/* frame */}
         <div className={`${smallsize ? 'frame-mb':'frame'}`}>
         <article className="Mid"><h2>Store</h2></article>
-        {/* <h1 className="text-one ml-2 p-3 text-[length:var(--thirdegreesize2)]">Shop By Category</h1> */}
-        {/* <HorizontalScrollCarousel Catg={Catg} smallsize={smallsize} refetch={refetch}/> */}
-        {/* <Store smallsize={smallsize} Catg={Catg} BestSellerAndMain={true}/> */}
         <Store smallsize={smallsize} BestSellerAndMain={false} Catg={!data ? [] : data.map((value)=>value.catg)} />
-                {/* <div className={`flex flex-row w-full p-4 bg-mainele catsection`}> */}
-                {/* <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-2 justify-center py-1 border text-sm bg-mainele text-one border-mainele focus:outline-none w-fit focus:border-one"
-                >
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                  {category}
-                  </option>
-                  ))}
-                  </select>  */}
-              {/* </div> */}
         </div>
         <article className="info w-full h-[700px] bg-mainele">
             <h1>Contact us</h1>
@@ -73,8 +57,8 @@ const Userpage = ({refetch}) => {
 const Store = ({smallsize,Catg,BestSellerAndMain}) =>{
   
   const categories = [...new Set(Catg)];
-  const [selectedCategory, setSelectedCategory] = useState([]); // Store raw data, not JSX
-  const [gridlist, setGrid] = useState([true,false]); // Store raw data, not JSX
+  const [selectedCategory, setSelectedCategory] = useState([]); 
+  const [gridlist, setGrid] = useState([true,false]); 
   const [direction, setdirection] = useState(false);
   let location = useLocation()
   useEffect(()=>{
@@ -242,7 +226,7 @@ const HorizontalScrollCarousel = ({Catg,refetch,smallsize}) => {
     <section ref={targetRef} className="relative h-[250vh] w-full bg-neutral">
       <div className="sticky top-20 w-full flex items-center overflow-hidden ">
         <motion.div style={{ x }} className="flex gap-8 justify-evenly">
-        {Catg.map((value)=> <DisplayList smallsize={smallsize} refetch={refetch} Catg={value} limit={1} />)}
+        {Catg.map((value,index)=> <DisplayList key={index} smallsize={smallsize} refetch={refetch} Catg={value} limit={1} />)}
         </motion.div>
       </div>
     </section>

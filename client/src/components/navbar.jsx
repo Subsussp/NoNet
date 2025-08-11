@@ -129,6 +129,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                                 return 
                             }  if(Obj.href){
                                 return  <a
+                                key={index}
                                 href={Obj.href}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
@@ -197,6 +198,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             if(Obj.href){
                                 return  <a
                                 href={Obj.href}
+                                key={index}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
                                 <span>{Obj.icon}</span>              
@@ -213,6 +215,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                             return <>
                                 <Link
                                 to={Obj.link}
+                                key={index}
                                 onClick={()=>setShow(!showList)}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>

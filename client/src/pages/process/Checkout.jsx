@@ -3,10 +3,237 @@ import { CreditCard, Truck, User, Package, ArrowRight, ArrowLeft } from 'lucide-
 import { cahce, Cartcontext } from 'pages/Root/Shop/Shop';
 import { useQuery } from '@tanstack/react-query';
 import LocationPicker from '../../components/Mapicker';
+import { API_BASEURL } from 'Var/URLS';
+import { useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
+import { FaCheckCircle } from "react-icons/fa";
+
+const countries = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Cape Verde",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo (Brazzaville)",
+  "Congo (Kinshasa)",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "East Timor (Timor-Leste)",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini",
+  "Ethiopia",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Korea, North",
+  "Korea, South",
+  "Kosovo",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Mozambique",
+  "Myanmar (Burma)",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "North Macedonia",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Togo",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican City",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+];
+function OrderSuccessCard() {
+  return (
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="fixed inset-0 flex items-center justify-center z-50"
+    >
+      <div className="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center border border-green-100">
+        <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-3" />
+        <h2 className="text-xl font-bold text-gray-800">
+          Order Placed Successfully!
+        </h2>
+        <p className="text-gray-500 mt-1">
+          Your order has been received. We’ll notify you when it’s on the way.
+        </p>
+      </div>
+    </motion.div>
+  );
+}
 let CheckoutForm = memo(() => {
-  let data = useContext(Cartcontext)
+  const navigate = useNavigate()
+  let {cartdata: data,refetchcart} = useContext(Cartcontext)
   const [items, setItems] = useState([]);
   const [step, setStep] = useState(1);
+  const [working, setworking] = useState(true);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [Mapop, setMapop] = useState(false);
   const [errors, setErrors] = useState({firstName: undefined,
     lastName: undefined,
     email: undefined,
@@ -14,13 +241,13 @@ let CheckoutForm = memo(() => {
     address: undefined,
     city: undefined,
     coords: undefined,
+    country: undefined,
     zipCode: undefined,
     paymentMethod: undefined,
     cardNumber: undefined,
     cardExpiry: undefined,
     cardCvc: undefined
   });
-  const [Mapop, setMapop] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,6 +257,8 @@ let CheckoutForm = memo(() => {
     city: '',
     coords: '',
     zipCode: '',
+    zipCode2:'',
+    country: '',
     paymentMethod: 'card',
     cardNumber: '',
     cardExpiry: '',
@@ -44,23 +273,20 @@ let CheckoutForm = memo(() => {
     setMapop(false)
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
   const handleLocationSelect = (latlng) => {
     setFormData(prev => ({ ...prev, ['coords']: latlng }));
-    // Clear error when user starts typing
     if (errors['coords']) {
       setErrors(prev => ({ ...prev, ['coords']: undefined }));
     }    
   };
   const HandleZipcode = (code) => {
-    setFormData(prev => ({ ...prev, ['zipCode']: code }));
-    // Clear error when user starts typing
-    if (errors['zipCode']) {
-      setErrors(prev => ({ ...prev, ['zipCode']: undefined }));
+    setFormData(prev => ({ ...prev, ['zipCode2']: code }));
+    if (errors['zipCode2']) {
+      setErrors(prev => ({ ...prev, ['zipCode2']: undefined }));
     }    
   };
   const validateStep = (currentStep) => {
@@ -76,6 +302,7 @@ let CheckoutForm = memo(() => {
     if (currentStep === 2) {
       if (!formData.address) newErrors.address = 'Address is required';
       if (!formData.city) newErrors.city = 'City is required';
+      if (!formData.country) newErrors.country = 'Country is required';
       if (!formData.coords) newErrors.state = 'Location is required';
       if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required';
     }
@@ -99,13 +326,25 @@ let CheckoutForm = memo(() => {
     setStep(prev => prev - 1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
+    setworking(false)
     if (validateStep(step) && !Mapop) {
-      // Handle form submission
-      // Here you would typically send the data to your backend
-      alert('Order placed successfully!');
-    }
+try {
+  let res = await fetch(`${API_BASEURL}/order/process`,{method:'POST',  headers: {
+    'Content-Type': 'application/json',
+  },body:JSON.stringify(formData),credentials:'include'})
+  if(res.ok){
+    refetchcart()
+    setShowSuccess(true);
+    setTimeout(() => navigate('/', { replace: true }), 1400);
+  }
+} catch (error) {
+  alert(error)
+} finally{
+      setworking(true)
+}
+}
   };
   if(!data && items){
     return <>Loading...</>
@@ -142,7 +381,7 @@ let CheckoutForm = memo(() => {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={working ? handleSubmit : (e)=>{e.preventDefault()}}>
               {/* Step 1: Personal Details */}
               {step === 1 && (
                 <div className="space-y-6">
@@ -230,6 +469,27 @@ let CheckoutForm = memo(() => {
                     )}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                       <div>
+      <label className="block text-sm font-medium text-gray-700">Country</label>
+      <select
+        name="country"
+        value={formData.country}
+        onChange={handleInputChange}
+        className={`no-arrow mt-1 block w-full rounded-md border ${
+          errors.country ? 'border-red-300' : 'border-gray-300'
+        } px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
+      >
+        <option value="">Select</option>
+        {countries.map((country) => (
+          <option key={country} value={country}>
+            {country}
+          </option>
+        ))}
+      </select>
+      {errors.country && (
+        <p className="mt-1 text-sm text-red-600">{errors.country}</p>
+      )}
+    </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">City</label>
                       <input
@@ -246,6 +506,7 @@ let CheckoutForm = memo(() => {
                       )}
                      
                     </div>
+         
                     <div>
                       <label className="block text-sm font-medium text-gray-700">ZIP Code</label>
                       <input
@@ -430,7 +691,7 @@ let CheckoutForm = memo(() => {
                     <div key={item.data._id} className="flex items-center justify-between border-b pb-2">
                     <div className="flex items-center space-x-3">
                         <img
-                        src={item.data.img[0]} // Assuming each item has an image URL
+                        src={item.data.img[0]} 
                         alt={item.data.name}
                         className="w-12 h-12 object-cover rounded-md"
                         />
@@ -467,6 +728,7 @@ let CheckoutForm = memo(() => {
           </div>
         </div>
       </div>
+        {showSuccess && <OrderSuccessCard />}
     </div>
   );
 })  

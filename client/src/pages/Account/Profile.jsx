@@ -9,7 +9,6 @@ export default function Profile({ initialData ,setUserData}) {
   const [url, setUrl] = useState(initialData?.url || "");
   const fileInputRef = useRef(null);
   useEffect(()=>{
-console.log(initialData)
   setName(initialData?.name || "");
    setPhone(initialData?.Phonenumber || "");
    setemail(initialData?.email || "");

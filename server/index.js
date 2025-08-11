@@ -100,7 +100,7 @@ app.get('/catg',async function (req,res){
 app.use('/items',router)
 app.use('/admin',isAuth,isAdmin,adminro)
 app.use('/cart', cartrouter)
-app.use('/Order',isAuth,OrderRout)
+app.use('/order',isAuth,OrderRout)
 async function inter(){ 
   let string = await items.find({})
   if (redis.get('data') !== JSON.stringify(string)){

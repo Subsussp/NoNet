@@ -23,12 +23,12 @@ import Maincontentwraper from 'pages/Admin Header (Not a route)/Maincontent.jsx'
 import Order from 'components/order.jsx';
 import Products from 'pages/control/Products.jsx';
 import Dashboard from 'pages/Dashboard/dashboard.jsx';
-import CheckoutForm from 'pages/proccess/Checkout.jsx';
+import CheckoutForm from 'pages/process/Checkout.jsx';
 import Profile from 'pages/Account/Profile';
 
 const App = () => {
   let {data: itemdata,refetch,isLoading} = useQuery({queryKey:['items'],queryFn:fetchitems})
-  let {data: cartdata,isError,isFetched} = useQuery({queryFn:cahce,queryKey:['cart']})
+  let {data: cartdata,refetch: refetchcart,isError,isFetched} = useQuery({queryFn:cahce,queryKey:['cart']})
   let [data,setdata] = useState(itemdata)
   let ref = useRef(true)
   const [isDarkMode, setDarkMode] = useState((JSON.parse(window.localStorage.getItem('us-inf'))) ? (JSON.parse(window.localStorage.getItem('us-inf'))).mode === 'nv' : true);
@@ -126,14 +126,14 @@ const App = () => {
                           <Top darkmode={isDarkMode}/> 
                      </div>
      : ((!['/admin','/dashboard','/users','/orders','/control','/analytics'].includes(location.pathname)) && <Header userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />)}
-    <Cartcontext.Provider value={cartdata}>
+    <Cartcontext.Provider value={{ cartdata, refetchcart }}>
     <Routes>
       {/* Public Routes */}
       <Route path='/login' element={<Account setAuth={setAuth} setuserR={setuserR} login={true} />}/>
       <Route path='/signup' element={<Account login={false} />}/>
       <Route index element={<Userpage refetch={refetch} isDarkMode={isDarkMode}/>}/>
       <Route path='/items/:id' element={<Getitempage />}/>   
-      <Route path='/proccess' element={<CheckoutForm  />}/>       
+      <Route path='/process' element={<CheckoutForm  />}/>       
       {/* <Route index element={<Root userR={userR} isDarkMode={isDarkMode} />}/> */}
       
       {/* Protected Routes (Require Authentication) */}

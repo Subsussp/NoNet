@@ -5,7 +5,6 @@ function Delete({Config,refresh}) {
         <div >
             <button className="w-full text-red bg-red p-2" onClick={() => {
                 Request(Config.url, 'delete', Config.config).then((e) => {
-                    console.log(e);
                     if (e.data !== null) {
                         refresh();
                     }

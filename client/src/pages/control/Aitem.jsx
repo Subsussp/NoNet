@@ -119,7 +119,7 @@ const Aitem = ({item,onClose,refresh,showForm,setShowForm})=>{
                                 placeholder="quantity"
                                 required
                                 id="quantity"
-                                className="h-10 w-4 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm dark:bg-gray-900 dark:text-white [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
+                                className="h-10 w-4 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm dark:bg-gray-900 dark:text-black [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
                             <button
                                 type="button"
                                 onClick={() => handleQuantityChange(1)}

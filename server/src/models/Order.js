@@ -26,7 +26,7 @@ const orderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+    enum: ["pending", "shipped", "delivered", "cancelled"],
     default: "pending"
   },
   shippingAddress: {
@@ -35,7 +35,11 @@ const orderSchema = new mongoose.Schema({
     city: String,
     country: String,
     zipCode: String,
-    phone: String
+    phone: Number, 
+    coords: Object,
+    email: String,
+    zipCode2: String,
+
   },
   trackingNumber: { type: String, default: null },
 },{timestamps:true,collection:"Orders"});

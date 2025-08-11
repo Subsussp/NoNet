@@ -14,7 +14,8 @@ let usersschema = new mongoose.Schema({
         type:String,
         default: "user"
     },
-    cart:{type:Array}
+    cart:{type:Array},
+    orders:{type:Array}
 }, {
     collection:"Users",
     timestamps:true
