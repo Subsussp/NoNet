@@ -23,12 +23,14 @@ OrderRout.route('/process').post(async function (req,res,next) {
       return res.status(400).json({ error: "Cart is empty" });
     }
     const orderItems = await  Promise.all(user.cart.map(async (obj) => {
-    const item = await items.findById(obj.id).select('price');
+    const item = await items.findById(obj.id).select('name price _id');
 return {
-      product: obj.id,
+      name:item.name,
+      product: item._id,
+      price: item.price,
       quantity: obj.m,
-      price:item.price,
     }}))
+    console.log(orderItems)
     const totalAmount = orderItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0

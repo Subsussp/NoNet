@@ -51,6 +51,7 @@ let patchitem = async function (req, res, next) {
     res.json(upitem)
     let data = await items.find({})
     redis.setEx('data', (60 * 60 * 48) ,JSON.stringify(data))
+    redis.setEx(`item-${req.body._id}`,(60 * 60 * 48),JSON.stringify(upitem))
 }
 
 

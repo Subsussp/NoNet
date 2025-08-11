@@ -18,13 +18,13 @@ Router.route('/').get(function (req, res, next) {
   }, getitems).post(isAdmin,additem,redisupdate).patch(isAdmin,patchitem)
 Router.route('/:id').get(async function (req,res){ 
   const id = req.params.id
-  redis.get(`item-${req.params.id}`).then(async (r) => {
+  redis.get(`item-${id}`).then(async (r) => {
     if(r){
       return res.json(JSON.parse(r))
     }
     let data = await items.findOne({_id:id}).catch((err) => console.log("err "+ err))
     if(data){
-      redis.setEx(`item-${req.params.id}`, (60 * 60 * 48) ,JSON.stringify(data))
+      redis.setEx(`item-${id}`, (60 * 60 * 48) ,JSON.stringify(data))
       return res.status(200).json(data)
     }
     res.status(404).json({"msg":'nodata'})  
