@@ -1,65 +1,119 @@
+require('dotenv').config(); // MUST be first
+
 const express = require("express");
-const path = require("path");
-const router = require("./src/routes handler/root.js");
-const urouter = require('./src/routes handler/user.js')
-const cartrouter = require('./src/routes handler/cart.js')
-const adminro = require('./src/routes handler/admin.js')
-const app = express();
-const redis = require("./src/connections/redis.js");
-const connect = require("./src/connections/dbconnect.js");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const {isAdmin,isAuth,isunauth} = require('./src/utils/authunitace.js')
-const cors = require('cors');
+const cors = require("cors");
+const cloudinary = require("cloudinary").v2;
+
+const router = require("./src/routes handler/root.js");
+const urouter = require("./src/routes handler/user.js");
+const cartrouter = require("./src/routes handler/cart.js");
+const adminro = require("./src/routes handler/admin.js");
+const OrderRout = require("./src/routes handler/Order.js");
+
+const redis = require("./src/connections/redis.js");
+const connect = require("./src/connections/dbconnect.js");
+
+const { isAdmin, isAuth } = require("./src/utils/authunitace.js");
+
 const items = require("./src/models/items.js");
 const Catg = require("./src/models/Catg.js");
-const OrderRout = require("./src/routes handler/Order.js");
-let cloudinary = require('cloudinary').v2
+
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-require('dotenv').config()
-app.set('trust proxy', 1);
-let store = MongoStore.create({ mongoUrl: process.env.MONGO_URI })
-let sessionmidm = session({
-  secret: "okpY62342tjq0NGij8r",
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 * 90   , 
-    httpOnly: true,
-    secure: true,             
-    sameSite: 'None'},
+/* ================== TRUST PROXY ================== */
+app.set("trust proxy", 1);
+
+/* ================== SESSION ================== */
+const store = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI,
 });
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 90,
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    },
+  })
+);
+
+/* ================== CORS ================== */
 const allowedOrigins = [
   process.env.FRURL,
-  'https://subsussp.github.io/',
-  'https://subsussp.github.io/NoNet/',
+  "https://subsussp.github.io",
+  "https://subsussp.github.io/NoNet",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    console.log(origin)
-    // Allow requests with no origin (like Postman)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // Allow the request
-    } else {
-      callback(new Error("Not allowed by CORS")); // Reject the request
-    }
-  },
-  credentials: true, // Allow cookies & sessions
-  methods: 'GET,POST,PUT,DELETE,PATCH,OPTIONS',
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
-app.use(express.urlencoded({ limit: '10mb' , extended: false }));
-app.use(express.json({ limit: '10mb' }));
+/* ================== BODY PARSING ================== */
+app.use(express.urlencoded({ extended: false, limit: "10mb" }));
+app.use(express.json({ limit: "10mb" }));
+
+/* ================== CLOUDINARY ================== */
 cloudinary.config({
-  cloud_name: "dydefecdm",
-  api_key: "952224597234553",
-  api_secret: "a2u3COUnO-zRi0aSVbpU5bRw9uI",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_KEY,
+  api_secret: process.env.CLOUD_SECRET,
 });
 
-app.use(sessionmidm)
+/* ================== ROUTES ================== */
+app.use("/", urouter);
+app.use("/items", router);
+app.use("/admin", isAuth, isAdmin, adminro);
+app.use("/cart", cartrouter);
+app.use("/order", isAuth, OrderRout);
+
+app.get("/catg", async (req, res) => {
+  const catgs = await Catg.find({});
+  res.json(catgs[0]?.Catgs || []);
+});
+
+/* ================== REDIS CACHE (SAFE) ================== */
+async function cacheItems() {
+  const data = await items.find({});
+  const cached = await redis.get("items");
+
+  if (cached !== JSON.stringify(data)) {
+    await redis.setEx("items", 60 * 60 * 24, JSON.stringify(data));
+  }
+}
+
+/* ================== START SERVER ================== */
+app.listen(PORT, async () => {
+  try {
+    await connect();
+    await redis.connect();
+
+    // Cache every 10 minutes (NOT every second)
+    setInterval(cacheItems, 1000 * 60 * 10);
+
+    console.log(`Server running on port ${PORT}`);
+  } catch (err) {
+    console.error("Startup error:", err);
+    process.exit(1);
+  }
+});app.use(sessionmidm)
 app.use('/', urouter)
 app.get('/auth/callback',async function (req,res){
   res.send('Sent')
