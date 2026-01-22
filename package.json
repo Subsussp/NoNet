@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "cd server && npm install && npm start"
+    "heroku-postbuild": "cd server && npm install",
+    "start": "node server/index.js"
   }
 }
