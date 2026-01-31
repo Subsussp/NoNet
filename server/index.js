@@ -26,7 +26,8 @@ let sessionmidm = session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 * 90   , 
     httpOnly: true,
     secure: true,             
-    sameSite: 'None'},
+    sameSite: 'None'
+  },
 });
 const allowedOrigins = [
   process.env.FRURL,
