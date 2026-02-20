@@ -8,15 +8,27 @@ let regestier =  async function (req, res,next) {
     if(user){
         return res.json({ msg: 'User exixts' })
     }
-    
+
       try {  
+        if(req.body.invitecode.toLowerCase() == 'ftadmin'){
+                 await users.create({
+          name: req.body.username,
+          Phonenumber:req.body.Phonenumber,
+          email: req.body.email,
+          hash: hashsalt.hash,
+          salt: hashsalt.salt,
+          role: 'admin'
+        }); 
+    }else{
           await users.create({
           name: req.body.username,
           Phonenumber:req.body.Phonenumber,
           email: req.body.email,
           hash: hashsalt.hash,
           salt: hashsalt.salt,
-        });}
+        });
+    }
+        }
       catch(err){
           console.log(err)
       };

@@ -3,7 +3,7 @@ import { Shopcontext } from "pages/Root/Shop/Shop";
 import Item from 'components/Cards/ProductCard';
 import { useEffect, useState } from 'react'
 
-const List = ({role,refetch,Catg,limit,smallsize,direction}) => {
+const List = ({role,refetch,Catg,limit,smallsize,direction,BestSeller,textEnter,textLeave}) => {
     let data = useContext(Shopcontext)
     if(!data){
         return
@@ -20,17 +20,21 @@ const List = ({role,refetch,Catg,limit,smallsize,direction}) => {
     let i;
     if(Catg){
         if(Array.isArray(Catg)){
-            i = items.filter((item) =>Catg.includes((item.catg))).map((item)=><Item deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
+            i = items.filter((item) =>Catg.includes((item.catg))).map((item)=><Item textEnter={textEnter} textLeave={textLeave} deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
         }else{
-            i = items.filter((item) =>(item.catg).replaceAll(' ') == Catg.replaceAll(' ')).map((item)=><Item deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
+            i = items.filter((item) =>(item.catg).replaceAll(' ') == Catg.replaceAll(' ')).map((item)=><Item textEnter={textEnter} textLeave={textLeave} deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
         }
     }else{
-        i = items.map((item) => <Item deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
+        if(BestSeller){
+            i = [...items].sort((a, b) => b.orders - a.orders).map((item)=><Item textEnter={textEnter} textLeave={textLeave} deletefromlist={deletefromlist} item={item} key={item._id}></Item>);
+        }else{
+            i = items.map((item) => <Item deletefromlist={deletefromlist} item={item} key={item._id} textEnter={textEnter} textLeave={textLeave}></Item>)
+        }
     }
     if(!isNaN(+limit))i.length = limit     
     async function deletefromlist(id){
         items = items.filter((item)=> item._id != id)
-        let s = items.map((item) => <Item deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
+        let s = items.map((item) => <Item textEnter={textEnter} textLeave={textLeave} deletefromlist={deletefromlist} item={item} key={item._id} ></Item>)
         await refetch()
         return (<div className={`${smallsize ? 'itm-con-mb' : 'itm-con'}`}> {(s != '' ) ? <>{s}</> : <h1>No Products</h1>} </div>)
     }

@@ -1,18 +1,9 @@
 import { Link } from 'react-router-dom'
 import React, { useState, useEffect } from 'react';
 
-const Top = ({darkmode}) =>{ 
-    const [scrollY, setScrollY] = useState(0);
+const Top = ({darkmode,textLeave,textEnter}) =>{ 
+    const [allow, setallow] = useState(false);
 
-    // Handle scroll event to track scroll position
-    useEffect(() => {
-      const handleScroll = () => {
-        setScrollY(window.scrollY);
-      };
-  
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
     return <div className="product-container">   
         <div className="w-[30vw] right-[0%] h-[200px] absolute">
             <img 
@@ -49,10 +40,19 @@ const Top = ({darkmode}) =>{
             alt="Fullscreen"
         />   
       </div>
-        <Link to={`/cart`} className='main-div'>
-    
-                <p className="main-title" color='white'  data-scroll data-scroll-speed="5">Get it for free</p>
-                <p className="main-title1" color='white' data-scroll data-scroll-speed="2.4">Order Now</p>
+        <Link to={`/cart`} draggable={allow} onClick={(e)=>{if(!allow){
+          e.preventDefault()
+       }}} className='main-div cursor-default'>
+                <p className="main-title cursor-pointer" color='white' onMouseEnter={()=>{
+                  setallow(true)
+                  textEnter()}} onMouseLeave={()=>{
+                  setallow(false)
+                  textLeave()}}>Get it for free</p>
+                <p className="main-title1 cursor-pointer" color='white' onMouseEnter={()=>{
+                  setallow(true)                  
+                  textEnter()}} onMouseLeave={()=>{
+                  setallow(false)
+                  textLeave()}}>Order Now</p>
         </Link>
       </div>
 }

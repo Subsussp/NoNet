@@ -32,8 +32,8 @@ export default function ProductPage({data,refe}) {
                     {colors.map((color)=><span key={color} onClick={()=>alert(color)} style={{'width':'40px','height':'40px','backgroundColor':`${color}`,'borderRadius':'50%'}}></span>)}
                 </div>
                 <div className="Description">
-                    <h1>Description</h1>
-                    <p>{data.desc}This is like shit product and here is the test butcg butch asd ie fa hasdgjas This is like shit product and here is the test butcg butch asd ie fa hasdgjas This is like shit product and here is the test butcg butch asd ie fa hasdgjas This is like shit product and here is the test butcg butch asd ie fa hasdgjas This is like shit product and here is the test butcg butch asd ie fa hasdgjas This is like shit product and here is the test butcg butch asd ie fa hasdgjas This is like shit product and here is the test butcg butch asd ie fa hasdgjas</p>
+                    <h3>Description</h3>
+                    <p>{data.desc}</p>
                 </div>
                 </div>
                 <div className="lastdiv">

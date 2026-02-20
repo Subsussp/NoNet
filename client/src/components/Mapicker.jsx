@@ -2,6 +2,10 @@ import { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
+const bounds = [
+  [-90, -180], // Southwest corner (lat, lng)
+  [90, 180]    // Northeast corner (lat, lng)
+];
 
 // Fix leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -37,6 +41,9 @@ const LocationPicker = ({ onLocationSelected, coords, setZipcode ,clickable}) =>
       <MapContainer
         center={coords ? coords : [0,0]}
         zoom={2}
+        minZoom={1.5}   // users can’t zoom out further than zoom level 3
+        maxBounds={bounds}
+        maxBoundsViscosity={1.0}  // this prevents bouncing outside bounds
         scrollWheelZoom={true}
         className="w-full h-full" 
       >

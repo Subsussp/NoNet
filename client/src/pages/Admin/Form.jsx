@@ -105,7 +105,7 @@ export function Form({onClose,formData2,setFormData2,showForm,handleQuantityChan
 
         {/* Price and Quantity Row */}
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 items-center">
           <div>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="input-container">
@@ -120,11 +120,11 @@ export function Form({onClose,formData2,setFormData2,showForm,handleQuantityChan
             </div>
           </div>
           {/* <div className="last"> */}
-                     <div className="left flex items-center rounded border border-gray-200 dark:border-gray-800">
+                     <div className="left flex items-center -mb-4 h-12 rounded border border-gray-200 dark:border-gray-800">
                             <button
                                 type="button"
                                 onClick={() => handleQuantityChange((formData.quantity - 1) <= 0 ? 0 : -1)}
-                                className="size-10 text-gray-600 transition hover:opacity-100 dark:text-gray-300">
+                                className="size-10 text-black transition hover:opacity-100 ">
                                 &minus;
                             </button>
                             <input
@@ -135,11 +135,11 @@ export function Form({onClose,formData2,setFormData2,showForm,handleQuantityChan
                                 placeholder="quantity"
                                 required
                                 id="quantity"
-                                className="h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
+                                className="h-5 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
                             <button
                                 type="button"
                                 onClick={() => handleQuantityChange(1)}
-                                className="size-10 text-gray-600 transition hover:opacity-80 dark:text-gray-300"
+                                className="size-10 text-black opacity-100 transition hover:opacity-80 "
                             >
                                 +
                             </button>

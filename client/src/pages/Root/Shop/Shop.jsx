@@ -2,7 +2,7 @@ import { useEffect, useState ,createContext, memo, useMemo, useContext, useRef} 
 import { useLocation, useNavigate,  useParams, useSearchParams } from 'react-router'
 import axios from 'axios';
 import Dashboard from 'pages/Dashboard/dashboard.jsx';
-import {Userpage} from './user.jsx'
+import Userpage from './user.jsx'
 import Noroute from 'components/Error404.jsx'
 import { useQuery } from '@tanstack/react-query';
 import {fetchitems, fetchuser} from 'utills/fetch.js'
@@ -18,6 +18,7 @@ export let Cartcontext = createContext()
 async function getproduc(id){
   let a = await axios.get(API_BASEURL + `/items/${id}`, {withCredentials:true}).catch((res) => res)
   let data = await a.data
+  console.log(data)
   return data
 }
 async function cahce(){
@@ -40,6 +41,7 @@ const Getitempage = () => {
   if(Object.values(data).length < 1){
     return <></>
   }
+  console.log(data)
       return data ? (<ProductPage refe={id} data={data}/>) : <Noroute/>
 }
 
@@ -160,7 +162,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-4">
+    <div className="max-w-3xl mx-auto p-4 space-y-4 ">
       {data.data.map((item) => (
         <div
           key={item.data._id}

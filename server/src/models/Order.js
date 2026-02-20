@@ -36,7 +36,8 @@ const orderSchema = new mongoose.Schema({
     city: String,
     country: String,
     zipCode: String,
-    phone: Number, 
+    phone: {  
+    type: String, trim: true}, 
     coords: Object,
     email: String,
     zipCode2: String,

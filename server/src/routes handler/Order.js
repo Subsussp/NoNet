@@ -23,12 +23,16 @@ OrderRout.route('/process').post(async function (req,res,next) {
       return res.status(400).json({ error: "Cart is empty" });
     }
     const orderItems = await  Promise.all(user.cart.map(async (obj) => {
-    const item = await items.findById(obj.id).select('name price _id');
+    const quantity = obj.m || 1;
+    const item = await items.findByIdAndUpdate(
+      obj.id,
+      { $inc: { orders: quantity } },   
+      { new: true }).select('name price _id');
 return {
       name:item.name,
       product: item._id,
       price: item.price,
-      quantity: obj.m,
+      quantity: quantity,
     }}))
     console.log(orderItems)
     const totalAmount = orderItems.reduce(
@@ -88,17 +92,15 @@ return {
   }
 }).patch(async function (req,res,next) {
     let id = req.body._id
-    let status = req.body.status
-    console.log(req.body)
-    console.log(status)
-    console.log(id)
+    let reqstatus = req.body.status
+
     try {
-        let res =await Order.findByIdAndUpdate(id,{'$set':{'orderStatus': status}})
-        console.log(res)
-        res.status(202).end()
+        let updatedOrder = await Order.findByIdAndUpdate(id,{'$set':{'orderStatus': reqstatus}})
+        console.log(updatedOrder)
+        return res.status(202).end()
     } catch (error) {
         console.log(error)
-        res.status(404).end()
+        return res.status(404).end()
     }
 })
 

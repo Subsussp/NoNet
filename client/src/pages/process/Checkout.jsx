@@ -349,10 +349,11 @@ try {
   if(!data && items){
     return <>Loading...</>
   }   
+    let sub = items.length > 0 ? items.reduce((next,item)=> +(item.data.price * item.nun) + +next,0) : 0
     const orderSummary = {
-      subtotal: items.length > 0 ? items.reduce((next,item)=> +(item.data.price * item.nun) + +next,0) : 0,
-      shipping: 9.99,
-      tax: 20.00,
+      subtotal: sub,
+      shipping: sub ? 9.99 : 0.0,
+      tax: 20.00 /100.0 * sub,
     };
     orderSummary.total = orderSummary.subtotal + orderSummary.shipping + orderSummary.tax;
   return (
@@ -381,7 +382,7 @@ try {
               </div>
             </div>
 
-            <form onSubmit={working ? handleSubmit : (e)=>{e.preventDefault()}}>
+            <form onSubmit={handleSubmit}>
               {/* Step 1: Personal Details */}
               {step === 1 && (
                 <div className="space-y-6">
@@ -673,6 +674,7 @@ try {
                 ) : (
                   <button
                     type="submit"
+                    disabled={!working}
                     className="ml-auto px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
                     Place Order

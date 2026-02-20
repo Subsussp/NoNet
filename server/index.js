@@ -31,7 +31,7 @@ let sessionmidm = session({
 });
 const allowedOrigins = [
   process.env.FRURL,
-  'https://subsussp.github.io/',
+  'https://subsussp.github.io',
   'https://subsussp.github.io/NoNet/',
 ];
 
@@ -111,7 +111,7 @@ async function inter(){
  
 setInterval(inter,1000)
 module.exports={store}
-app.listen(3001, async function () {
+app.listen(process.env.PORT || 3001, async function () {
   try {
     await connect();
     await redis.connect()

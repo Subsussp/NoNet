@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Mybutton from 'components/ui/Button'
 import Add_to_cart from "pages/Root/Shop/Item/ADD_to_cart";
 import { API_PRODUCTS } from "Var/URLS";
-const Item = ({item, deletefromlist}) => {
+const Item = ({item, deletefromlist,textEnter,textLeave}) => {
   const [formData, setFormData] = useState({
         _id: item._id,
         name: item.name,
@@ -32,6 +32,7 @@ const Item = ({item, deletefromlist}) => {
 <div className="item-container">
       <div className="image-container">
         <img draggable='false'
+          onMouseEnter={textEnter} onMouseLeave={textLeave}
           src={formData2.img[0]}
           alt={`${formData2.name} photo`}
           className={`product-image${formData2.img[1] ? 'opacity-100 group-hover:opacity-0' : ''}`}
@@ -48,7 +49,7 @@ const Item = ({item, deletefromlist}) => {
         </div>
       </div>
       <div className="flex flex-row flex-nowrap w-full" >
-        <Link to={`/items/${formData2._id}`}>
+        <Link to={`/items/${formData2._id}`} onMouseEnter={textEnter} onMouseLeave={textLeave}>
           <div className="product-card-name">
             <dd className="font-medium">{formData2.name}</dd>
           </div>

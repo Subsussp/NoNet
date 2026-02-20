@@ -1,0 +1,7 @@
+clean and organise the code 
+remove uncessercy parts of the code
+/\ add something in the right half of the screen in the login form page 
+/\ adjust the lighting of the phone 
+change the background color of the screen 
+/\ make the navbar always above the login form
+auto email loginging

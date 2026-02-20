@@ -9,7 +9,9 @@ Router.get('/logout', isAuth, function (req, res) {
             return res.status(400).json({ 'msg': err })
         }
         res.clearCookie('connect.sid')
-        res.json({ 'msg': 'logged out' })
+        res.json({ 'msg': 'logged out' }
+            
+        )
     })
 })
 

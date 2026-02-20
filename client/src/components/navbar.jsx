@@ -1,6 +1,6 @@
 import { LiaShoppingBagSolid } from "react-icons/lia";
 import {storeName,Storecolors,logo} from '../Var/config.js'
-import {Link, useNavigate, } from 'react-router-dom'
+import {Link, useLocation, useNavigate, } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import '../Assets/Style.css'
 import { useEffect, useState } from "react";
@@ -10,12 +10,14 @@ import menuItems from "./DropdownItems.jsx";
 import { Shopcontext } from "../pages/Root/Shop/Shop.jsx";
 import { useContext } from "react";
 import { Menu, X } from 'lucide-react';
+import Tbreveal from "./Tbreveal.jsx";
 
-const Header = ({userR,setDarkMode,isDarkMode}) => {
+const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
     let [showList,setShow] = useState(false)
     let [searchParams,setSearchParams] = useState('')
-    const navigate = useNavigate();
     let ShopData = useContext(Shopcontext)
+    const location = useLocation();
+    const navigate = useNavigate();
     const [isMenuOpen, setIsOpen] = useState(false);
     const [mdiconVisible, setIsVisible] = useState(false);
     const [smallsizw, setsmallsizw] = useState(false);
@@ -49,12 +51,13 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                 <div className="flex items-center h-16 justify-between">
                     <div className="flex items-center space-x-8">
                         <h1 className="le-side-header text-one ">
-                            <Link to={'/'} >{storeName}</Link></h1>
+                            <Link onMouseEnter={textEnter} onMouseLeave={textLeave} to={'/'} >{storeName}</Link></h1>
                         <div className="relative flex-1 max-w-xl">
                                 <button className="absolute inset-y-0 left-0 pl-3 flex items-center" onClick={trigger}>
-                                    <Search className={`h-5 w-5 text-${!Trigger ? 'one':'mainele'}`}/>
+                                    <Search onMouseEnter={textEnter} onMouseLeave={textLeave} className={`h-5 w-5 text-${!Trigger ? 'one':'mainele'}`}/>
                                 </button>
                             <input
+                            onMouseEnter={textEnter} onMouseLeave={textLeave} 
                             onChange={(e)=>setSearchParams(e.target.value)}
                             type="text"
                             className={`${Trigger ? 'block' : 'hidden'} transition duration-300 ease-in-out w-full pl-10 pr-3 py-2 border rounded-lg bg-one text-mainele placeholder-gray-400 focus:outline-none`}
@@ -64,7 +67,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                                 {(searchParams && ShopData) && ShopData.map((item)=>{
                                     if((item.name.toLowerCase().replaceAll(' ','')).includes(searchParams.toLowerCase().replaceAll(' ',''))){
                                         return <li className="bg-one">
-                                                        <Link className="w-full h-full bg-one flex items-center" to={`/items/${item._id}`}>
+                                                        <Link onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full h-full bg-one flex items-center" to={`/items/${item._id}`}>
                                                             <img draggable='false'
                                                             src={item.img[0]}
                                                             alt={`${item.name} photo`}
@@ -84,21 +87,21 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                 </div>
                 {!mdiconVisible &&
             <ol className="flex items-center space-x-6 px-170">
-                {!userR ?
+                {!userR && !['/login','/signup'].includes(location.pathname) ?
                     // what an unregestried user sees
                  <><div className="w-full px-4 py-2 text-left flex items-center justify-between hover:bg-gray-700 "> 
-                    <Link className="text-one px-2" to="/login">Login</Link>
+                    <Link className="text-one px-2" to="/login" onMouseEnter={textEnter} onMouseLeave={textLeave}>Login</Link>
                 </div> 
                 <div className="w-full px-4 py-2 text-left flex items-center justify-between hover:bg-gray-700 "> 
-                    <Link className="text-one px-2" to="/signup">SignUp</Link>
+                    <Link className="text-one px-2" to="/signup" onMouseEnter={textEnter} onMouseLeave={textLeave}>SignUp</Link>
                 </div></>:
                 <> 
                      {/* what a user sees */}
                     {/* <Link className="text-one py-1 px-2" to={'/profile'}>Profile</Link>  */}
                     {/* <a className="text-one py-1 px-2"  href="/logout">Logout</a> */}
                 </>}
-            <div id="tk" on onMouseOut={()=>setIsOpen(false)} onMouseOver={()=>setIsOpen(true)}>
-                <li style={{'cursor':'pointer'}} className="text-one no-underline cursor-pointer text-interactive-primary hover:text-interactive-primary-hover disabled:pointer-events-none disabled:opacity-40 sc-28e98bbc-0 CrMKY ml-3 flex items-center justify-center" 
+            <div id="tk" onMouseOut={()=>setIsOpen(false)} onMouseOver={()=>setIsOpen(true)}>
+                <li style={{'cursor':'pointer'}} onMouseEnter={textEnter} onMouseLeave={textLeave} className="text-one no-underline cursor-pointer text-interactive-primary hover:text-interactive-primary-hover disabled:pointer-events-none disabled:opacity-40 sc-28e98bbc-0 CrMKY ml-3 flex items-center justify-center" 
                     onClick={()=>setShow(!showList)}
                     >
                         <div className="flex flex-col justify-center items-center"><IconContext.Provider value={{size:"6px"}} > <User className="h-6 w-6"/></IconContext.Provider>
@@ -144,7 +147,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                                     )}
                                 </a>
                             }
-                            return <li key={index} onClick={() => Obj.link && navigate(`${Obj.link}`)}  className="w-full cursor-pointer flex w-full items-center space-x-3 px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems hover:text-mainele">
+                            return <li key={index} onClick={() => Obj.link && navigate(`${Obj.link}`)} onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full cursor-pointer flex w-full items-center space-x-3 px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems hover:text-mainele">
                                     <span >{Obj.icon}</span>
                                     <span className="flex-1 ">{Obj.label}</span>
                                     {Obj.suffix && (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
@@ -161,11 +164,12 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                     </div>
                     </div>
                 )}</div>
-                <li onClick={()=>setShow(false) } className="text-one" ><Link to={'/cart'} ><IconContext.Provider  value={{ size:"29px" }}> <LiaShoppingBagSolid /></IconContext.Provider> </Link></li>
+                <li onClick={()=>setShow(false) } className="text-one" onMouseEnter={textEnter} onMouseLeave={textLeave}><Link to={'/cart'} ><IconContext.Provider  value={{ size:"29px" }}> <LiaShoppingBagSolid /></IconContext.Provider> </Link></li>
             </ol>}
              {(mdiconVisible && smallsizw) && 
             <div className="flex items-center">
-                <button
+                <button 
+                onMouseEnter={textEnter} onMouseLeave={textLeave}
                 onClick={()=>{
                     setShow(!showList)
                 }}
@@ -179,59 +183,43 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
         }
         </div>
         {(showList && smallsizw) && 
-        <div className={`block bg- shadow-lg fixed top-0 left-0 w-screen h-screen z-50`}>
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-mainele sm:px-3  h-screen  w-[100vw] flex items-center flex-col overflow-y-auto">
+      <div className={`block bg- shadow-lg fixed top-0 left-0 w-screen h-screen z-50`}>
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-black sm:px-3  h-screen  w-[100vw] flex items-center flex-col overflow-y-auto">
             <button
                 onClick={()=>{
-                    setShow(!showList)
-                }} className="block py-[15px] mb-[30px] px-[30px] place-self-end h-6 w-6 text-one"><X  aria-hidden="true" /></button>
+                  setShow(!showList)
+                }} className="block py-[15px] mb-[30px] px-[46px] place-self-end h-6 w-6 text-white"><X aria-hidden="true" /></button>
+           <div className='flex flex-col divide-y w-full h-full divide-white divide-opacity-10 border-t border-white border-opacity-10 border-b overflow-hidden js-menu-inner'> 
             {menuItems.map((Obj,index)=>{
-                            if(Obj.divider){
-                                return <hr key={index} className="my-2 w-full border-1 border-one"/>
-                            }
-                            if(Obj.require && !userR){
-                                return 
-                            }
-                            if(Obj.admin && userR != 'admin'){
-                                return 
-                            }
-                            if(Obj.href){
-                                return  <a
+            if(Obj.require && !userR || Obj.toggle){
+                return 
+            }
+            if(Obj.admin && userR != 'admin'){
+                return 
+            }
+            if(Obj.divider){
+               return <hr key={index} className="my-2 w-full border-1 border-one"/>
+              }
+            
+              return <Tbreveal delay={index * .3}>  {Obj.href ?
+                                <a
                                 href={Obj.href}
-                                key={index}
-                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
-                                <span className="flex-1">{Obj.label}</span>
-                                <span>{Obj.icon}</span>              
-                                    {Obj.suffix &&  (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
-                                    {Obj.toggle && (
-                                        <button onClick={changeTheme}>
-                                            <div className={`w-10 h-6 rounded-full p-1 ${isDarkMode ? 'bg-blue-500' : 'bg-gray-300'}`}>
-                                            <div className={`w-4 h-4 rounded-full bg-white transform transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
-                                        </div>
-                                        </button>
-                                    )}
-                                </a>
-                            }
-                            return <>
-                                <Link
+                                target="_blank" rel="noopener noreferrer"
+                                className="flex w-full font-Main items-center space-x-3 block px-3 py-20 text-3xl text-white">
+                                {Obj.label}
+                                </a> : <Link
+                                onClick={()=>setShow(false)}
                                 to={Obj.link}
-                                key={index}
-                                onClick={()=>setShow(!showList)}
-                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
-                                <span className="flex-1">{Obj.label}</span>
-                                <span>{Obj.icon}</span>              
-                                    {Obj.suffix &&  (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
-                                    {Obj.toggle && (
-                                        <button onClick={changeTheme}>
-                                            <div className={`w-10 h-6 rounded-full p-1 ${isDarkMode ? 'bg-blue-500' : 'bg-gray-300'}`}>
-                                            <div className={`w-4 h-4 rounded-full bg-white transform transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
-                                        </div>
-                                        </button>
-                                    )}
-                                </Link>
-                            </>
-                        })}
+                                className="flex w-full font-Main items-center space-x-3 block px-3 py-20 text-3xl text-white">
+                                {Obj.label}
+                                </Link> }</Tbreveal>
+                }
+                              )}
+                              </div>
                 
+
+            </div>
+                </div>}
                 {/* <a
                     href="#"
                     className="text-dropitems hover:bg-dropitems hover:text-mainele block px-3 py-2 rounded-md font-medium"
@@ -244,8 +232,7 @@ const Header = ({userR,setDarkMode,isDarkMode}) => {
                 >
                     Model X
                 </a> */}
-            </div>
-                </div> }
+
         </header> 
 
     )

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { FiPhone, FiMapPin, FiMail } from "react-icons/fi";
 import { FaSearch, FaMapMarkerAlt, FaCheck, FaTimes } from "react-icons/fa";
 import { API_BASEURL } from "Var/URLS"
@@ -20,6 +20,7 @@ const Order = () => {
   const [handler, sethandler] = useState(0);
   const [locationModal, setLocationModal] = useState({ open: false, coords: null });
   const statuses = ["All","Pending", "Shipped", "Delivered", "Cancelled",];
+  const [showDetails, setShowDetails] = useState([false,'']);
 
   const filteredOrders = orders.filter(order => {
     const matchesStatus = filter === "All" || order.orderStatus === filter.toLocaleLowerCase();
@@ -97,67 +98,108 @@ const Order = () => {
         )}
 
         {filteredOrders.map(order => (
-          <motion.div
-            key={order._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white shadow-md rounded-lg p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center"
+<motion.div
+      key={order._id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white shadow-md rounded-lg p-4 grid grid-cols-[1fr_auto] gap-4 items-start"
+      style={{ minHeight: '140px' }} // prevent too small when details hidden
+    >
+      {/* Left side: Main order info and toggle + details */}
+      <div className="flex flex-col space-y-1">
+        <h2 className="font-semibold text-lg">{order.shippingAddress.fullName}</h2>
+        <p className="text-gray-600 text-sm py-1 flex items-center">
+          <FiMail className="mr-2 text-blue-500" />
+          {order.shippingAddress.email}
+        </p>
+        <p className="text-gray-600 text-sm py-1 flex items-center">
+          <FiPhone className="mr-2 text-green-500" />
+          {order.shippingAddress.phone}
+        </p>
+        <p className="text-gray-600 text-sm py-1 flex items-center">
+          <FiMapPin className="mr-2 text-red-500" />
+          {order.shippingAddress.address}
+        </p>
+        <p className="text-sm font-medium">
+          Status:{' '}
+          <span
+            className={`select-none ${
+              order.orderStatus === 'delivered'
+                ? 'text-green-600'
+                : order.orderStatus === 'shipped'
+                ? 'text-blue-600'
+                : 'text-yellow-600'
+            }`}
           >
-            <div className="flex flex-col space-y-1">
-              <h2 className="font-semibold text-lg ">{order.shippingAddress.fullName}</h2>
-              <p className="text-gray-600 text-sm py-1">    <FiMail className="mr-2 text-blue-500 float-left" />
-{order.shippingAddress.email}</p>
-              <p className="text-gray-600 text-sm py-1"><FiPhone className="mr-2 text-green-500 float-left" />
+            {order.orderStatus}
+          </span>
+        </p>
 
- {order.shippingAddress.phone}</p>
-              <p className="text-gray-600 text-sm py-1"><FiMapPin className="mr-2 text-red-500 float-left" /> {order.shippingAddress.address}</p>
-              <p className="text-sm font-medium">
-                Status:{" "}
-                <span
-                  className={`select-none ${
-                    order.orderStatus === "delivered"
-                      ? "text-green-600"
-                      :  order.orderStatus === "shipped" ? "text-blue-600": "text-yellow-600"
-                  }`}
+        {/* Details toggle */}
+        <button
+          onClick={() => setShowDetails([showDetails[1] == order._id ?!showDetails[0] : true ,order._id])}
+          className="mt-2 inline-block text-blue-600 hover:text-blue-800 font-medium focus:outline-none"
+          aria-expanded={showDetails[0]}
+          aria-controls={`order-details-${order._id}`}
+        >
+          {(showDetails[0] && order._id == showDetails[1]) ? 'Hide Details ▲' : 'Show Details ▼'}
+        </button>
+
+        {/* Details list */}
+        <AnimatePresence initial={false} >
+          {(showDetails[0] && order._id == showDetails[1]) && (
+            <motion.div
+              key="details"
+              id={`order-details-${order._id}`}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden mt-2 text-gray-700"
+            >
+              <ul className="list-disc list-inside max-h-40 overflow-y-auto text-sm">
+                {order.items.map((item)=><li key={item.product}><span className="font-medium">{item.name}</span> — Qty: {item.quantity}, Price: ${item.price}</li>)}
+              </ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Right side: ID and buttons */}
+      <div className="flex flex-col justify-between items-end space-y-3">
+        <p className="font-mono font-semibold text-gray-600 select-text">#{order._id.slice(-6)}</p>
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+          <button
+            onClick={() => setLocationModal({ open: true, coords: order.shippingAddress.coords })}
+            className="px-3 py-2 bg-blue-500 text-white rounded-lg flex items-center space-x-1 hover:bg-blue-600 mb-2 sm:mb-0"
+          >
+            <FaMapMarkerAlt />
+            <span>Location</span>
+          </button>
+
+          {order.orderStatus !== 'delivered' && (
+            <div className="flex flex-col sm:flex-row gap-2">
+              {order.orderStatus !== 'shipped' && (
+                <button
+                  onClick={() => updateOrderStatus(order._id, 'shipped', sethandler)}
+                  className="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-semibold shadow"
                 >
-                  {order.orderStatus}
-                </span>
-              </p>
+                  On Its Way
+                </button>
+              )}
+              <button
+                onClick={() => updateOrderStatus(order._id, 'delivered', sethandler)}
+                className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow"
+              >
+                Mark Delivered
+              </button>
             </div>
-              <p className= "font-base text-l cursor-pointer">#{order._id}</p>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mt-3 sm:mt-0">
-  {/* Location button */}
-  <button
-    onClick={() =>
-      setLocationModal({ open: true, coords: order.shippingAddress.coords })
-    }
-    className="px-3 py-2 bg-blue-500 text-white rounded-lg flex items-center space-x-1 hover:bg-blue-600"
-  >
-    <FaMapMarkerAlt />
-    <span>Location</span>
-  </button>
+          )}
+        </div>
+      </div>
+    </motion.div>
 
-  {/* Status buttons */}
-  {order.orderStatus !== 'delivered' &&
-  <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:mt-0">
-    {order.orderStatus !== 'shipped' &&
-    <button
-      onClick={() => updateOrderStatus(order._id, "shipped",sethandler)}
-      className="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-semibold shadow"
-    >
-      On Its Way
-    </button>
-}
-    <button
-      onClick={() => updateOrderStatus(order._id, "delivered",sethandler)}
-      className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow"
-    >
-      Mark Delivered
-    </button>
-  </div>}
-
-            </div>
-          </motion.div>
         ))}
       </div>
 

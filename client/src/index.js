@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import {QueryClientProvider,QueryClient} from '@tanstack/react-query'
 import { HashRouter } from 'react-router-dom';
 import ScrollToTop from 'utills/ScrollToTop';
+
 const queryClient = new QueryClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

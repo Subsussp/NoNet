@@ -4,7 +4,7 @@ import Users from 'pages/users/Users'
 import { Shopcontext } from "pages/Root/Shop/Shop";
 import { fetchitems } from "utills/fetch";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useLocation } from "react-router-dom";
+import { data, Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Sidebar from "pages/Admin/utills/AdminSidebar/Adminsidebar";
 import { 
@@ -24,14 +24,6 @@ import {
 import axios from "axios";
 import { API_ADMIN } from "Var/URLS";
 import { FaIntercom } from "react-icons/fa";
-  const salesData = [
-    { name: 'Jan', value: 4000 },
-    { name: 'Feb', value: 3000 },
-    { name: 'Mar', value: 5000 },
-    { name: 'Apr', value: 4500 },
-    { name: 'May', value: 6000 },
-    { name: 'Jun', value: 5500 },
-  ];
   
   
 const Adminpage = () => { 
@@ -39,6 +31,7 @@ const Adminpage = () => {
   const [OsalesData, setOsalesData] = useState([]);
   const [Orders, setOrders] = useState([]);
   const [totalOrdersChange, setTotalOrdersChange] = useState([]);
+  const [totalorders, setTotalorders] = useState([]);
   const [ActiveUsers, setActiveUsers] = useState([]);
   const [totalUsersChange, setTotalUsersChange] = useState([]);
   const [recentOrders, setrecentOrders] = useState([]);
@@ -67,10 +60,11 @@ const Adminpage = () => {
           orderDate.setHours(0, 0, 0, 0);
           return orderDate.getTime() === today.getTime();
         }).length;
+        setTotalorders(Orders.length)
         Orders.reverse()
-        Orders.length = 8
+        let recent = Orders.slice(0,8)
         setTodaysOrdersCount(todaysOrdersCount)
-        setrecentOrders(Orders)
+        setrecentOrders(recent)
         setActiveUsers(users);
         setRevenue(Revenue);
         setTotalOrdersChange(totalOrdersChange);
@@ -108,7 +102,7 @@ const Adminpage = () => {
               { label: 'Total Revenue', value: '$' + Revenue , change: '' },
               { label: 'Total Users', value: ActiveUsers, change: totalUsersChange + '%' },
               { label: 'Today’s Orders', value: todaysOrdersCount, change: '' },
-              { label: 'Total Orders', value: Orders.length, change: totalOrdersChange + '%'},
+              { label: 'Total Orders', value: totalorders, change: totalOrdersChange + '%'},
               // { label: 'Conversion Rate', value: '3.2%', change: '' }
             ].map((stat, index) => (
               <div
