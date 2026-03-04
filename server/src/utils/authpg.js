@@ -12,7 +12,8 @@ async function auth(req,res,next){
             if (hashed == user.hash) {
                 req.user = user
                 return next()
-            } else {
+            } 
+            else {
                 return res.json({ 'isauth':false,'msg': "not auth"})
             }
         } else {

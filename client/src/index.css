@@ -8,6 +8,7 @@
             padding: 10px 20px;
         }
     }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 
     @keyframes Drop {
         0%{
@@ -48,6 +49,7 @@
         scroll-behavior: smooth;
     }
 
+    
     :root{
         --mainele: #000;
         --one: #fff;
@@ -73,7 +75,18 @@
         padding: 0;
         background-color: #FFF;
     }
+    /* Chrome, Safari, Edge */
+    input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0) inset !important; 
+    -webkit-text-fill-color: #000 !important;
+    transition: background-color 5000s ease-in-out 0s; 
+    }
 
+    /* Firefox */
+    input:-moz-autofill {
+    box-shadow: 0 0 0px 1000px white inset !important;
+    -moz-text-fill-color: #000 !important;
+    }
     * :focus{
         outline: none;
     }
@@ -89,7 +102,7 @@
     }
 
     .content {
-    flex: 1;
+        flex: 1;
     }
     .listimg-con{
         color: rgb(102, 102, 102);
@@ -111,6 +124,7 @@
     .fullscreen-container {
         overflow: hidden;
         position: relative;
+        background-color: #000;
         top: 0;
         width: 100%;
         height: 100vh;
@@ -153,7 +167,7 @@
             font-weight: 500;
         }
         a{
-            color: var(--main);
+            color: var(--one);
             -webkit-appearance: none;
             appearance: none;
             text-decoration: none;
@@ -175,7 +189,6 @@
             inline-size: 100%; 
             justify-content: space-between;
             z-index: 50;
-            border-bottom: var(--one) 1px solid ;
         }
         #IK{
             animation: Drop ease 300ms;
@@ -213,7 +226,7 @@
             align-items: center;
             display: flex;
             position: relative;
-            transition: all 0.3 ease 0;
+            transition: all 0.3 ease ;
         }
         .md-main-header li{
             display: inline-block;
@@ -291,6 +304,7 @@
         }
         .product-container {
             position: absolute;
+            background-color: var(--mainele);
             top: 0;
             width: 100%;
             height: 100svh;
@@ -662,15 +676,23 @@
             color: var(--one);
         }
         .sub-title{
-            font-family: "Cinzel", serif;
+            color: lab(86.34% 0 -0.01);
+            font-family: "MyCustomFont", "Cinzel", serif;
             font-optical-sizing: auto;
             font-weight: 300;
             font-style: normal;
             user-select: none;
-            font-size: clamp(1rem, 5vw, 2rem);
-            width: clamp(300px, 80vw, 500px);
+            font-size: clamp(1rem, 10vw, 10rem);
             text-align: center;
-            color: var(--one);
+            /* text-shadow:
+                0 0 2.5px #fff,
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px rgb(184, 184, 184),
+                0 0 40px rgb(207, 255, 255),
+                0 0 80px rgb(158, 158, 158),
+                0 0 90px rgb(124, 124, 124),
+                0 0 100px #0ff; */
         }
         .add-tocart{
             position: absolute;
@@ -1256,7 +1278,11 @@ font-weight: 100 900; /* full weight range */
   font-weight: 600;
   font-style: italic;
 }
-
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('../public/fonts/DisplayNarrowExtraLight.ttf') format('truetype');
+  font-style: normal;
+}
 @font-face {
   font-family: 'Poppins';
   src: url('../public/fonts/poppins/Poppins-Bold.ttf') format('truetype');

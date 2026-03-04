@@ -5,9 +5,13 @@ import { useNavigate } from "react-router-dom";
 const Logout = ({setAuth,setuserR}) => {
     let navigate = useNavigate()
     useEffect(() => {
-        axios.get(API_logoutURL, { withCredentials: true }).then((res) => {
+        const token = localStorage.getItem("token"); 
+        axios.get(API_logoutURL, { withCredentials: true,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },}).then((res) => {
             setuserR('')
             setAuth('')
+            localStorage.setItem("token", null);
             window.sessionStorage.binar = 'false'
             return navigate('/');
         })

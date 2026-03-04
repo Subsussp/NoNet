@@ -3,7 +3,7 @@ import {storeName,Storecolors,logo} from '../Var/config.js'
 import {Link, useLocation, useNavigate, } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import '../Assets/Style.css'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from 'react';
 import { Search, User} from 'lucide-react';
 import menuItems from "./DropdownItems.jsx";
@@ -11,8 +11,9 @@ import { Shopcontext } from "../pages/Root/Shop/Shop.jsx";
 import { useContext } from "react";
 import { Menu, X } from 'lucide-react';
 import Tbreveal from "./Tbreveal.jsx";
+import { use } from "react";
 
-const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
+const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter,setloadPre}) => {
     let [showList,setShow] = useState(false)
     let [searchParams,setSearchParams] = useState('')
     let ShopData = useContext(Shopcontext)
@@ -22,6 +23,8 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
     const [mdiconVisible, setIsVisible] = useState(false);
     const [smallsizw, setsmallsizw] = useState(false);
     const [Trigger, setTrigger] = useState(false);
+    const [loading, setloading] = useState(true);
+    const number = useRef(-1);
     const changeTheme = (theme) => {
         setDarkMode(!isDarkMode)
     };
@@ -37,18 +40,34 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
             setIsVisible(false); // Show only if more than md
             setsmallsizw(false)
         }
-      };
-  
-      handleResize(); // Run once on mount
+    };
+      setloading(false)
+      handleResize(); 
       window.addEventListener("resize", handleResize);
   
       return () => window.removeEventListener("resize", handleResize);
     }, []);
- 
+
+    if(loading){
+        return <></>
+    }
+    const maskStyle = ["/signup","/login"].includes(location.pathname)
+    ? {
+        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 100%)',
+        WebkitMaskRepeat: 'no-repeat',
+        WebkitMaskSize: '100% 100%',
+        maskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 100%)',
+        maskRepeat: 'no-repeat',
+        maskSize: '100% 100%',    
+        }
+    : {}; 
     return (
-        <header className={`bg-mainele border-b border-gray-700 sticky top-0 z-50 flex flex-center flex-col flex-nowrap`} >
-            <div className={`NN-main-header bg-mainele`}>
-                <div className="flex items-center h-16 justify-between">
+        <header
+ className={`${!["/signup","/login"].includes(location.pathname) ? "bg-mainele" : !isDarkMode &&"bg-mainele"}  border-gray-700 sticky top-0 z-50 flex flex-center flex-col flex-nowrap`} >
+            <div
+ className={`NN-main-header ${!["/signup","/login"].includes(location.pathname) && "bg-mainele"} 
+    ${!["/signup","/login"].includes(location.pathname) ? "border-b border-wone" : ""}`}>
+                <div className="flex items-center h-16 justify-between" style={maskStyle}>
                     <div className="flex items-center space-x-8">
                         <h1 className="le-side-header text-one ">
                             <Link onMouseEnter={textEnter} onMouseLeave={textLeave} to={'/'} >{storeName}</Link></h1>
@@ -89,11 +108,11 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
             <ol className="flex items-center space-x-6 px-170">
                 {!userR && !['/login','/signup'].includes(location.pathname) ?
                     // what an unregestried user sees
-                 <><div className="w-full px-4 py-2 text-left flex items-center justify-between hover:bg-gray-700 "> 
-                    <Link className="text-one px-2" to="/login" onMouseEnter={textEnter} onMouseLeave={textLeave}>Login</Link>
+                 <><div onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full text-left flex items-center justify-between hover:bg-gray-700 transition duration-300 ease-in-out rounded-lg "> 
+                    <Link className="text-one px-6 w-full h-full py-2 " to="/login" onClick={()=>setloadPre(true)}>Login</Link>
                 </div> 
-                <div className="w-full px-4 py-2 text-left flex items-center justify-between hover:bg-gray-700 "> 
-                    <Link className="text-one px-2" to="/signup" onMouseEnter={textEnter} onMouseLeave={textLeave}>SignUp</Link>
+                <div onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full text-left flex items-center justify-between hover:bg-gray-700 transition duration-300 ease-in-out rounded-lg"> 
+                    <Link className="text-one px-6 w-full h-full py-2 " to="/signup"  onClick={()=>setloadPre(true)}>SignUp</Link>
                 </div></>:
                 <> 
                      {/* what a user sees */}
@@ -110,7 +129,7 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
                 {(isMenuOpen || showList) && (
                     <div
                     id="IK"
-                    className="absolute z-[5] mt-2 w-[18rem] bg-transparent top-[136px] pt-4 right-[43px]"
+                    className="absolute z-[3] mt-2 w-[18rem] transition-all bg-transparent top-[136px] pt-4 right-[43px]"
                     style={{ transform: "translate(-50px,-83px)"}}
                     >
                     <div
@@ -134,7 +153,7 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
                                 return  <a
                                 key={index}
                                 href={Obj.href}
-                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
+                                className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems duration-300 ease-in-out transition-all hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
                                 <span>{Obj.icon}</span>              
                                     {Obj.suffix &&  (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
@@ -147,7 +166,7 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
                                     )}
                                 </a>
                             }
-                            return <li key={index} onClick={() => Obj.link && navigate(`${Obj.link}`)} onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full cursor-pointer flex w-full items-center space-x-3 px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems hover:text-mainele">
+                            return <li key={index} onClick={() => Obj.link && navigate(`${Obj.link}`)} onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full cursor-pointer flex w-full items-center space-x-3 px-4 py-2 text-left flex items-center justify-between text-dropitems hover:bg-dropitems duration-300 ease-in-out transition-all  hover:text-mainele">
                                     <span >{Obj.icon}</span>
                                     <span className="flex-1 ">{Obj.label}</span>
                                     {Obj.suffix && (<span className="text-sm text-gray-500">{Obj.suffix}</span> )}
@@ -188,20 +207,21 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter}) => {
             <button
                 onClick={()=>{
                   setShow(!showList)
-                }} className="block py-[15px] mb-[30px] px-[46px] place-self-end h-6 w-6 text-white"><X aria-hidden="true" /></button>
-           <div className='flex flex-col divide-y w-full h-full divide-white divide-opacity-10 border-t border-white border-opacity-10 border-b overflow-hidden js-menu-inner'> 
-            {menuItems.map((Obj,index)=>{
-            if(Obj.require && !userR || Obj.toggle){
-                return 
-            }
-            if(Obj.admin && userR != 'admin'){
-                return 
-            }
-            if(Obj.divider){
-               return <hr key={index} className="my-2 w-full border-1 border-one"/>
-              }
-            
-              return <Tbreveal delay={index * .3}>  {Obj.href ?
+                }} 
+                className="block py-[15px] mb-[30px] px-[46px] place-self-end h-6 w-6 text-white">
+                    <X aria-hidden="true" />
+                </button>
+           <div className='flex flex-col divide-y w-full h-full divide-white divide-opacity-10 border-t border-white border-opacity-10 border-b  js-menu-inner'> 
+            {menuItems.filter((Obj) => {
+                if ((Obj?.require && !userR) || Obj?.toggle) return false;
+                if ((Obj?.admin && userR !== 'admin') || (!Obj.renderforadmin && userR == 'admin')) return false;
+                return true;})
+                .map((Obj,index)=>{
+                if(Obj.divider){
+                return <hr key={index} className="my-2 w-full border-1 border-one"/>
+                }
+            let delay = index * .3
+              return <Tbreveal key={index} delay={delay}>  {Obj.href ?
                                 <a
                                 href={Obj.href}
                                 target="_blank" rel="noopener noreferrer"

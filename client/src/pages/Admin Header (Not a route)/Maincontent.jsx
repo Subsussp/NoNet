@@ -133,6 +133,7 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
                                 return 
                             }if(Obj.href){
                                 return    <Link
+                                key={index}
                                 onClick={()=> window.location.href = Obj.href}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
@@ -150,6 +151,7 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
                             return <>
                                 <Link
                                 to={Obj.link}
+                                key={index}
                                 className="flex w-full items-center space-x-3 block px-3 py-2 font-medium text-dropitems hover:bg-dropitems hover:text-mainele">
                                 <span className="flex-1">{Obj.label}</span>
                                 <span>{Obj.icon}</span>              
@@ -168,7 +170,7 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
         </div>
 }
         </div>
-        <Sidebar setShow={setSidebarOpen} showList={sidebarOpen}/>
+        <Sidebar setShow={setSidebarOpen} showList={sidebarOpen} />
         <Outlet /> {/* This will render the correct page */}
         </div>
                 </>

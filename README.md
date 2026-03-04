@@ -1,43 +1,38 @@
-# 🛍️ Elegant E-Commerce Store
+# Elegant E-Commerce Store
 
-Welcome to my personal e-commerce project! This is a sleek, modern web store built from scratch with a focus on clean design and essential functionality. While the project isn’t 100% complete, it includes many working features and showcases a solid foundation.
+It's a simple E-Commerce Store designed in a modern way with love :)
+. While the project isn’t 100% complete, it includes many working features and showcases a solid foundation.
 
-## 🌐 See It in Action
 
-👉 Launch the store now: [Click for Live Demo](https://subsussp.github.io/NoNet/)
-
----
-
-## 🖼️ A Glimpse Inside
+## A Glimpse Inside
 
 ![Screenshot](https://res.cloudinary.com/dydefecdm/image/upload/Screenshot_.png)
-**2.**
+
 ![Screenshot](https://res.cloudinary.com/dydefecdm/image/upload/Screenshot_2.png)
-**3.**
+
 ![Screenshot](https://res.cloudinary.com/dydefecdm/image/upload/Screenshot.png)
 
 
-## 🔐 Admin Access
+## Admin Access
 
 To explore the admin features, use the following credentials:
 
 - **Email:** `admin1@gmail.com`  
 - **Password:** `11`
+- or Create your own account and put `ftadmin` in the Administrator access code Field to get the an Admin Account.
 
-You're also free to create your own account, but it will be a regular user account without admin privileges.
+## Key Features
 
-## ✅ Key Features
+- User authentication system (register/login/logout)
+- Fully functional cart and checkout flow
+- Order system with backend integration
+- Address selection via interactive map
 
-- 🔑 User authentication system (register/login/logout)
-- 🛒 Fully functional cart and checkout flow
-- 📦 Order system with backend integration
-- 🗺️ Address selection via interactive map
-
-## ⚠️ Note
+## Note
 
 This is still a work-in-progress. A few features are either incomplete or simplified due to time constraints, but the core systems are up and running.
 
-## 🚧 Tech Stack
+## Tech Stack
 
 Here’s what powers the project:
 
@@ -47,6 +42,7 @@ Here’s what powers the project:
 - ![MongoDB](https://img.shields.io/badge/-MongoDB-47A248?logo=mongodb&logoColor=white&style=flat-square) **MongoDB**
 - ![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=flat-square) **Redis**
 
-## 🙌 Thanks for checking it out!
 
-This project represents a lot of effort and learning. I'm excited to share it and open to any feedback or suggestions!
+## Thanks for checking it out!
+
+I spent a lot on this project and I'm always improving so if you have any recommendations or tips on what to improve here is my email sofaomda738@gmail.com

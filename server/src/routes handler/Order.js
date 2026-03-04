@@ -34,7 +34,6 @@ return {
       price: item.price,
       quantity: quantity,
     }}))
-    console.log(orderItems)
     const totalAmount = orderItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
@@ -84,7 +83,6 @@ return {
     user.cart = [];
     user.orders.push({orderid:newOrder._id,date: new Date()});
     await user.save();
-    console.log(newOrder)
     res.status(201).json({ message: 'Order created', order: newOrder });
   } catch (error) {
     console.error('Order creation error:', error);
@@ -96,7 +94,6 @@ return {
 
     try {
         let updatedOrder = await Order.findByIdAndUpdate(id,{'$set':{'orderStatus': reqstatus}})
-        console.log(updatedOrder)
         return res.status(202).end()
     } catch (error) {
         console.log(error)

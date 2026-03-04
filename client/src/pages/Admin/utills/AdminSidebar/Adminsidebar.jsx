@@ -37,7 +37,7 @@ let Sidebar = ({setShow,showList}) => {
                     >
                       <div className="flex flex-col justify-center items-center"><IconContext.Provider value={{size:"6px"}}>
                           <motion.span
-                            key={icon} // Forces re-render for smooth animation
+                            key={icon} 
                             initial={{ opacity: 1, scale: 0.5 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.5 }}
@@ -71,8 +71,7 @@ let Sidebar = ({setShow,showList}) => {
        >
       <nav className="mt-[9px] justify-center flex items-center flex-nowrap flex-col bg-mainele border-x border-b border-one ">
       {navItems.map((item, index) => {
-        return <>
-        <Link 
+        return  <Link 
           key={index}
           to={item.href}
           className={`flex items-center justify-center w-full hover:bg-gray-700 py-3 font-Main font-[600] tracking-[0.1em] text-sm ${item.active &&
@@ -80,7 +79,7 @@ let Sidebar = ({setShow,showList}) => {
             >
           {item.icon}
           <span className="ml-3 text-one" >{item.label}</span>
-        </Link></>}
+        </Link>}
       )}
     </nav>                          </motion.span>
 )}

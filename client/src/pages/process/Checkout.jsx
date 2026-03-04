@@ -6,7 +6,7 @@ import LocationPicker from '../../components/Mapicker';
 import { API_BASEURL } from 'Var/URLS';
 import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaMoneyBill } from "react-icons/fa";
 
 const countries = [
   "Afghanistan",
@@ -278,15 +278,15 @@ let CheckoutForm = memo(() => {
     }
   };
   const handleLocationSelect = (latlng) => {
-    setFormData(prev => ({ ...prev, ['coords']: latlng }));
-    if (errors['coords']) {
-      setErrors(prev => ({ ...prev, ['coords']: undefined }));
+    setFormData(prev => ({ ...prev, coords: latlng }));
+    if (errors.coords) {
+      setErrors(prev => ({ ...prev, coords: undefined }));
     }    
   };
   const HandleZipcode = (code) => {
-    setFormData(prev => ({ ...prev, ['zipCode2']: code }));
+    setFormData(prev => ({ ...prev, zipCode2: code }));
     if (errors['zipCode2']) {
-      setErrors(prev => ({ ...prev, ['zipCode2']: undefined }));
+      setErrors(prev => ({ ...prev, zipCode2: undefined }));
     }    
   };
   const validateStep = (currentStep) => {
@@ -303,7 +303,7 @@ let CheckoutForm = memo(() => {
       if (!formData.address) newErrors.address = 'Address is required';
       if (!formData.city) newErrors.city = 'City is required';
       if (!formData.country) newErrors.country = 'Country is required';
-      if (!formData.coords) newErrors.state = 'Location is required';
+      if (!formData.coords) newErrors.coords = 'Location is required';
       if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required';
     }
 
@@ -330,21 +330,23 @@ let CheckoutForm = memo(() => {
     e.preventDefault();
     setworking(false)
     if (validateStep(step) && !Mapop) {
-try {
-  let res = await fetch(`${API_BASEURL}/order/process`,{method:'POST',  headers: {
-    'Content-Type': 'application/json',
-  },body:JSON.stringify(formData),credentials:'include'})
-  if(res.ok){
-    refetchcart()
-    setShowSuccess(true);
-    setTimeout(() => navigate('/', { replace: true }), 1400);
-  }
-} catch (error) {
-  alert(error)
-} finally{
-      setworking(true)
-}
-}
+      try {
+        const token = localStorage.getItem("token"); 
+        let res = await fetch(`${API_BASEURL}/order/process`,{method:'POST',  headers: {
+          'Content-Type': 'application/json',
+          ...(token && { "Authorization": `Bearer ${token}`})
+        },body:JSON.stringify(formData),credentials:'include'})
+        if(res.ok){
+          setShowSuccess(true);
+          refetchcart()
+          setTimeout(() => navigate('/', { replace: true }), 1400);
+        }
+        } catch (error) {
+          alert(error)
+        } finally{
+            setworking(true)
+        }
+      }
   };
   if(!data && items){
     return <>Loading...</>
@@ -524,9 +526,9 @@ try {
                       )}
                     </div>                    
                     </div>
-                      <LocationPicker setZipcode={HandleZipcode} onLocationSelected={handleLocationSelect} setMapop={setMapop} coords={formData.coords}/>
+                      <LocationPicker error={errors.coords} setZipcode={HandleZipcode} onLocationSelected={handleLocationSelect} setMapop={setMapop} coords={formData.coords}/>
                       {errors.coords && (
-                        <p className="mt-1 text-sm text-red-600">{errors.state}</p>
+                        <p className="mt-1 text-sm text-red-600">{errors.coords}</p>
                       )}
                 </div>
               )}
@@ -584,6 +586,18 @@ try {
                       >
                         <Package className="w-6 h-6" />
                         <span>Fawry</span>
+                      </button>
+                        <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'cash' }))}
+                        className={`p-4 border rounded-lg flex flex-col items-center gap-2 transition-colors ${
+                          formData.paymentMethod === 'cash'
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-200 hover:border-blue-200'
+                        }`}
+                      >
+                        <FaMoneyBill className="w-6 h-6" />
+                        <span>Cash on delivery</span>
                       </button>
                     </div>
                   </div>
@@ -677,7 +691,7 @@ try {
                     disabled={!working}
                     className="ml-auto px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
-                    Place Order
+                  {!working ? "Processing..." : "Place Order"}
                   </button>
                 )}
               </div>

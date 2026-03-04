@@ -1,10 +1,29 @@
 const Users = require('../models/user.js')
-
-
-let isAuth = function (req, res, next) {
+const jwt = require("jsonwebtoken");
+let isAuth =async function (req, res, next) {
+    const authHeader = req.headers.authorization;
     if(req.session.user){
         return next()
-    }else{
+    }
+    else if(authHeader){
+        try {
+            const token = authHeader.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            if(!req.session.user){
+                const user = await Users.findOne({_id:decoded._id}).then((user) => user)
+                if (user) {
+                    req.user = user
+                    req.session.user = user
+                    req.session.isauth = true
+                }
+        }
+            return next();
+        } 
+        catch (err) {
+            return res.json({ 'isauth':false,'msg': "not auth"})
+        }
+    }    
+    else{
         return res.status(200).json({'msg':'forbidden','valid' :false})
     }
 } 
@@ -20,7 +39,24 @@ let isAdmin = async function (req, res, next) {
     res.status(403).json({'msg': 'not logged'})
 } 
 
-let isunauth = function (req,res,next){
+let isunauth =async function (req,res,next){
+    const authHeader = req.headers.authorization;
+    if(authHeader){
+        try {
+            const token = authHeader.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            if(!req.session.user){
+                const user = await Users.findOne({_id:decoded._id}).then((user) => user)
+                if (user) {
+                    req.user = user
+                    req.session.user = user
+                    req.session.isauth = true
+                }
+        }
+        } catch(err){
+            console.log(err)
+        }
+    }
     if (!req.session.isauth) {
         return next()
     } else {

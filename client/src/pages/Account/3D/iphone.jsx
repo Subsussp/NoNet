@@ -6,7 +6,7 @@ Source: https://sketchfab.com/3d-models/iphone-16-free-d58591e88a824dfd8cef0af61
 Title: iPhone 16 - Free
 */
 
-import React, { forwardRef, useEffect, useRef, useState } from 'react'
+import React, { forwardRef, Suspense, useEffect, useRef, useState } from 'react'
 import { Html, useGLTF } from '@react-three/drei'
 import * as THREE from "three";
 import { Eye, EyeOff, Mail, Lock, User, Phone, UserStar } from 'lucide-react';
@@ -17,50 +17,73 @@ import { useNavigate } from 'react-router-dom';
 import { API_login_route as login_route,API_register_route as register_route } from "Var/URLS";
 import axios from "axios";
 import { OrbitControls, TransformControls , useHelper ,useProgress} from "@react-three/drei";
-
-gsap.registerPlugin(CustomEase);
-const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textEnter}, ref) => {
+import { ScrollTrigger } from 'gsap/all';
+import Preloader from 'Preloader';
+gsap.registerPlugin(CustomEase,ScrollTrigger);
+const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textEnter,start,setanimation}, ref) => {
   let navigate = useNavigate()
+  const userRef = useRef(null);
+  const emailRef = useRef(null);
+  useEffect(() => {
+    if(userRef.current || emailRef){
+      login ? emailRef.current?.focus() : userRef.current?.focus();
+    }
+  }, [userRef.current,emailRef.current]);
   const [formData, setFormData] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-     const handleChange = (e) => {
-            const { name, value } = e.target;
-            setFormData({
-                ...formData,
-                [name]: value
-            });
-    };
+  const handleChange = (e) => {
+          const { name, value } = e.target;
+          setFormData({
+              ...formData,
+              [name]: value
+          });
+
+  };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here
+        setIsLoading(true)
+        const token = localStorage.getItem("token"); 
         let res = await axios.post(`${login ? login_route : register_route}`, formData, {
-            withCredentials: true
+            withCredentials: true,  headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
         })
-        console.log(res)
         let auth = await res.data
         if (login) {
+            if (auth.token) {
+              localStorage.setItem("token", auth.token);
+            }
             if (auth['us-va']) {
                 window.sessionStorage.binar = 'true'
+                setIsLoading(false)
                 setAuth(auth['us-va'])
                 setuserR(auth['us-r'] =='cole' ? 'admin':'user')
                 if (auth['us-r'] === 'cole') {
-                    return navigate('/dashboard')
+                    return navigate('/admin')
                 }
-                return navigate('/')
+                return navigate('/') 
             }
    
         }
+        setIsLoading(false)
         alert(auth.msg)
         navigate('/login')
     };
 
-  return (
+  return (<Suspense fallback={<Html center>loading....</Html>}>
+
           <Html
           transform
           distanceFactor={1}
           scale={4}
-          zIndexRange={[12, 12]} 
+          style={{
+            transformStyle: "preserve-3d",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            willChange:"transform"
+          }}
+          zIndexRange={[14, 14]} 
           occlude 
           position={[0,0,0.4]}
             >
@@ -120,7 +143,9 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
               height: '56px',
               border: '1px solid transparent'}}>
               <User size={20} color="#666" strokeWidth={2} style={{ marginRight: '12px' }} />
-              <input       style={{
+              <input    
+              ref={userRef}
+              style={{
                 flex: 1,
                 fontSize: '16px',
                 color: '#000',
@@ -152,6 +177,7 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
             }}>
             <Mail size={20} color="#666" strokeWidth={2} style={{ marginRight: '12px' }} />
             <input
+              ref={emailRef}
               autoComplete='email' 
               onChange={handleChange} 
               id="email" 
@@ -171,7 +197,7 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
               }}
             />
           </div>
-       
+
           {!login ?
               <div style={{
               display: 'flex',
@@ -252,6 +278,7 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
               )}
             </button>
           </div>
+                    {!login &&  
            <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -278,7 +305,29 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
               name="invitecode"
               placeholder="Administrator Access Code"
               autoComplete='FVLA'
-              required/>
+              />
+                  <input
+                  type='button'
+                  value={'Apply'}
+          onClick={()=>{
+            document.getElementById('invitecode').value = 'ftadmin'
+            handleChange({target:{name:'invitecode',value:"ftadmin"}})
+          }}
+          onMouseEnter={textEnter}
+          onMouseLeave={textLeave}
+              style={{
+                padding: '8px',
+                marginLeft: '8px',
+                background: 'none',
+                border: 'none',
+                fontSize: '14px',
+                fontWeight:400,
+                cursor: "pointer",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}/>
+                
           <div
           title='optional but advisable'
           onMouseEnter={textEnter}
@@ -297,7 +346,7 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
               }}>
                 optional
             </div>
-              </div>
+              </div>}
           <button
             type="button"
             style={{
@@ -379,8 +428,10 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
             type="button"
             onClick={() =>{
               if(login){
+                setanimation(false)
                 return navigate('/signup')
             } 
+            setanimation(false)
             return navigate('/login')
           }}
             style={{
@@ -411,15 +462,18 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
               e.target.style.backgroundColor = '#fff';
               textLeave()
             }}>
-            {!login ? 'Login' : "Create Account"}
+            {!login ? 'Login'  : "Create Account"}
           </button>
         </form>
       </div>
-    </div></Html>
+    </div>
+    </Html>
+          </Suspense>
+
   );
 });
 
-const Model = forwardRef(({start,login,setAuth,setuserR,rotation,setloading,textLeave,textEnter}, ref) => {
+const Model = forwardRef(({start,lref,login,setAuth,setuserR,rotation,setloading,textLeave,textEnter,setanimation}, ref) => {
   const { nodes, materials } = useGLTF("/NoNet/iphone_16.glb");
   let screenF = useRef()
   let Loginform = useRef()
@@ -429,69 +483,105 @@ const Model = forwardRef(({start,login,setAuth,setuserR,rotation,setloading,text
     width: 0,
     height: 0,
   });
-  const timeline = useRef();
+  const startPos = new THREE.Vector3(-0.223264268619277,-6.718330181694079,0.027297571832374);
+  const endPos = new THREE.Vector3(0, 0, -15);
+  const endPos2 = new THREE.Vector3(0, 0, -9);
+  const endQuat = new THREE.Quaternion();
+  useEffect(() => {
+    if (!ref.current || !lref.current) return ;
+    const ctx = gsap.context(() => {
 
-  useGSAP(() => {
-  if (!Loginform.current || !ref.current) return;
-    if (!timeline.current) {
-      timeline.current = gsap.timeline({
-        paused: true,
-        defaults: { duration: 3.2, ease: 'power3.inOut' },
-      });
-    const startPos = new THREE.Vector3(
-      -6.423264268619277,
-      -1.518330181694079,
-      -15.027297571832374
-    );
+    const startQuat = new THREE.Quaternion().setFromEuler(rotation?.current ?rotation.current : new THREE.Euler(-1.026463637316074, 0.5557156644058179 ,0.6794351471050598));
 
-    const startQuat = new THREE.Quaternion().setFromEuler(
-     rotation.current ?rotation.current : new THREE.Euler(-1.2441796259378586,0.6317017172635468,1.1179434317084542)
-    );
-
-    const endPos = new THREE.Vector3(0, 0, -1);
-    const endQuat = new THREE.Quaternion(); // identity
-
-    // Apply start state immediately
     ref.current.position.copy(startPos);
     ref.current.quaternion.copy(startQuat);
-
-    // Quaternion driver
+    
     const quatProgress = { t: 0 };
+    let quadAnimation= gsap.to(quatProgress, {
+        duration: 5.3,
+        t: 1,
+        ease: 'power1.out' ,
+        
+      scrollTrigger: {
+        trigger: "#scroll-section",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 3,
+      },
+    onUpdate: () => {
+      ref?.current?.quaternion.slerpQuaternions(startQuat, endQuat, quatProgress.t);
+      ref?.current?.updateMatrixWorld(true);
+    },
+  });
+  
+    const text = gsap.to(lref.current, {
+        scrollTrigger: {
+          trigger: "#scroll-section",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 3,
+          duration: 1.2, 
+        },
+        y:-1000,
+        ease: "power1.out",
+    });
 
-    // Position animation
-    timeline.current.to(ref.current.position, {
+
+
+    const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#scroll-section",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 3,
+    }
+  });
+    tl.to(ref.current.position, {
       x: endPos.x,
       y: endPos.y,
       z: endPos.z,
-    });
+      duration: 5.3,
+      ease: "none",})
+    .to(ref.current.position, {
+      duration:1,
+      z: endPos2.z + 8,
+      y: endPos2.y - 1,
+      ease: "power3.in",
+    },">")
+        return () => {
+      quadAnimation.scrollTrigger?.kill();
+      quadAnimation.kill();
 
-    // Quaternion slerp animation (runs in parallel)
-    timeline.current.to(
-      quatProgress,
-      {
-        t: 1,
-        onUpdate: () => {
-          ref.current.quaternion.slerpQuaternions(
-            startQuat,
-            endQuat,
-            quatProgress.t
-          );
-        },
-      },
-      '<' // same start time as position
-    );
-    console.log(LoginForm.current)
-  timeline.current.to(Loginform.current, {
-    width: '180vw',
-    height: '175vh',
-    maxWidth: 'none',
-    maxHeight: 'none',
-    ease: CustomEase.create("custom", "M0,0 C0.498,-0.03 0.453,0.926 1,0.926 "),
-    duration: 1.4,
-  },  "-=2" )}
-  if(start){
-      timeline.current.restart()
-  }
+      text.scrollTrigger?.kill();
+      text.kill();
+
+      tl.scrollTrigger?.kill();
+      tl.kill();
+    };
+  });
+
+    return () => ctx.revert();  
+  }, []);
+
+  useGSAP(() => {
+    if (!Loginform?.current || !ref?.current) return;
+    // if (!timeline.current) {
+    //   timeline.current = gsap.timeline({
+    //     paused: true,
+    //     defaults: { duration: 3.2, ease: 'power3.inOut' },
+    //   });
+  // const isSafari = navigator.vendor?.includes("Apple") && !navigator.userAgent.includes("CriOS");
+  // isSafari && timeline.current.to(Loginform.current, {
+  //   width: '180vw',
+  //   height: '175vh',
+  //   maxWidth: 'none',
+  //   maxHeight: 'none',
+  //   autoRound: false,
+  //   ease: CustomEase.create("custom", "M0,0 C0.498,-0.03 0.453,0.926 1,0.926 "),
+  //   duration: 1.4,
+  // },   "-=2")
+// }
+  window.scrollTo(0,document.documentElement.scrollHeight);
 }, [start]);
 
 
@@ -501,8 +591,6 @@ const Model = forwardRef(({start,login,setAuth,setuserR,rotation,setloading,text
       
       mesh.geometry?.computeBoundingBox?.();
       const bbox = mesh.geometry?.boundingBox;
-      console.log(bbox)
-      console.log(!bbox)
 
       if (bbox) {
         const center = new THREE.Vector3();
@@ -538,19 +626,21 @@ const Model = forwardRef(({start,login,setAuth,setuserR,rotation,setloading,text
     if (!nodes || !Loginform.current || !ref.current || !screenF.current) return;
     setloading(false)
   },[nodes])
-  return (
-    <group ref={ref} 
-    position={[-6.423264268619277,-1.518330181694079,-15.027297571832374]} 
-    rotation={[-1.2441796259378586,0.6317017172635468,1.1179434317084542]}
+  return (<group ref={ref} 
+    position={[-0.223264268619277,-6.718330181694079,0.027297571832374]} 
+    rotation={[-1.026463637316074, 0.5557156644058179 ,0.6794351471050598
+]}
+    // position={[-6.423264268619277,-1.518330181694079,-15.027297571832374]} 
+    // rotation={[-1.2441796259378586,0.6317017172635468,1.1179434317084542]}
 dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
         <group rotation={[Math.PI / 2, 0, 0]}>
           <mesh geometry={nodes.Object_12.geometry} material={materials.d79c406d92ac2ea2b462} />
           <mesh geometry={nodes.Object_14.geometry} material={materials['8ed052ed6d3cd71ab5e3']} />
           <mesh geometry={nodes.Object_16.geometry} material={materials['5155c9eac3acd76d34a9']} />
-          <mesh ref={screenF} geometry={nodes.Object_18.geometry} material={materials['4130c6244c49c5d5712e']}>
+          <mesh rotation={[0,0,0]} ref={screenF} geometry={nodes.Object_18.geometry} material={materials['4130c6244c49c5d5712e']}>
         
-          <LoginForm textLeave={textLeave} textEnter={textEnter} ref={Loginform} screenData={screenData} login={login} setAuth={setAuth} setuserR={setuserR}/>
+          <LoginForm setanimation={setanimation} start={start} textLeave={textLeave} textEnter={textEnter} ref={Loginform} screenData={screenData} login={login} setAuth={setAuth} setuserR={setuserR}/>
           </mesh>
           <mesh geometry={nodes.Object_20.geometry} material={materials.a18b462c494e4fd29b4b} />
           <mesh geometry={nodes.Object_23.geometry} material={materials.dee5a626f928a5fa4c28} />

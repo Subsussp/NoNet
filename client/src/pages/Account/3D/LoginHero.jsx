@@ -7,17 +7,9 @@ import { useGSAP } from "@gsap/react";
 import Iphone from './iphone.jsx'
 import { SpotLightHelper } from "three";
 import { ScrollTrigger } from "gsap/all";
-// --- 3D iPhone model ---
-function Loader() {
-  const { progress } = useProgress()
+import Preloader from "Preloader.jsx";
 
-  return (
-    <Html center>
-      {progress.toFixed(0)} % loaded
-    </Html>
-  )
-}
-export default function Hero({start,login,setAuth,setuserR,state ,setIsLoading,textLeave,textEnter}) {
+export default function Hero({start,login,setAuth,setuserR,state ,setIsLoading,textLeave,textEnter,setanimation,lref}) {
   const target = useRef();
   const light = useRef();
   let rotation = useRef()
@@ -54,8 +46,8 @@ export default function Hero({start,login,setAuth,setuserR,state ,setIsLoading,t
   {/* changing initial */}
       <ambientLight intensity={0.1} />
       <spotLight ref={light} position={[-20, 0, -15]} target={target.current} penumbra={3} angle={10} decay={0} intensity={1.4} />
-      <Suspense fallback={<Loader/>}>
-        <Iphone textLeave={textLeave} textEnter={textEnter} setloading={setIsLoading} rotation={rotation} start={start} ref={target} login={login} setAuth={setAuth} setuserR={setuserR}/>
+      <Suspense fallback={<Preloader/>}>
+        <Iphone lref={lref} setanimation={setanimation} textLeave={textLeave} textEnter={textEnter} setloading={setIsLoading} rotation={rotation} start={start} ref={target} login={login} setAuth={setAuth} setuserR={setuserR}/>
       </Suspense>
       </>
   )

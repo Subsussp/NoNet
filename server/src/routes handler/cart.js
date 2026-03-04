@@ -11,7 +11,7 @@ Router.route('/add-to-cart').get(isAuth,async function (req,res,next) {
     //token validition middleware
     let itemid = req.query.pr_id
     let item = await items.findById(itemid)
-    let user 
+    let user;
     if(itemid == ''){
         return res.status(404).send('error')
     }

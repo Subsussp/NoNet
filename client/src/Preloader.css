@@ -1,0 +1,16 @@
+.preloader-overlay-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+  will-change: transform, opacity;
+}
+
+.preloader-text{
+  color: beige;
+  font-size: 40px;
+  font-family: var(--Main-font);
+}

@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
       product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
       name: { type: String ,required: true },
       quantity: { type: Number, required: true, min: 1 },
-      price: { type: Number, required: true } // Store price at the time of purchase
+      price: { type: Number, required: true } 
 }
   ],
   totalAmount: { type: Number, required: true }, // Total cost of the order
@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ["card", "paypal", "cash"],
+    enum: ["card", "paypal", "cash","fawry","vodafone"],
     required: true
   },
   orderStatus: {

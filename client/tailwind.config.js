@@ -3,6 +3,9 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: { 
+      borderColor: {
+      'wone': 'var(--one)',
+    },
       colors: {
         'mainele': "var(--mainele)", // NavBackground , 
         'one': "var(--one)",  // NavChildren

@@ -14,9 +14,12 @@ import { createPortal } from "react-dom";
 
 export async function Request(url,rmethod = 'get',formData) { 
     const data = formData 
+    const token = localStorage.getItem("token"); 
     const config = {
         headers: {
-            'Content-Type': 'application/json',},
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : undefined,
+        },
         withCredentials: true,
         method:rmethod,
         data:JSON.stringify(data)

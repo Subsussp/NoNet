@@ -17,9 +17,14 @@ export default function Profile({ initialData ,setUserData}) {
   // PATCH function for updating profile fields
   const patchProfile = async (data) => {
     try {
+      const token = localStorage.getItem("token"); 
       const res = await fetch(`${API_BASEURL}/profile`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json", 
+          ...(token && { "Authorization": `Bearer ${token}` })
+      ,
+    },
         credentials: "include",
         body: JSON.stringify(data),
       }).then(async(res)=>await res.json()).then((data)=>setUserData(data.user));

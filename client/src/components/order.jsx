@@ -6,11 +6,21 @@ import { API_BASEURL } from "Var/URLS"
 import LocationPicker from "./Mapicker"
 import LocationPickerModal from "./LocationPickerModal ";
 
-async function updateOrderStatus(_id,status,sethandler){
-  let data = await fetch(`${API_BASEURL}/order/process`,{method:'PATCH', headers: {
-    'Content-Type': 'application/json',
-  },credentials:'include',body:JSON.stringify({_id,status})})
-  sethandler(1)
+async function updateOrderStatus(_id, status, setHandler) {
+  const token = localStorage.getItem("token"); 
+  const response = await fetch(`${API_BASEURL}/order/process`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json'    ,
+      ...(token && { Authorization: `Bearer ${token}` })},
+    credentials: 'include',
+    body: JSON.stringify({ _id, status })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update order status');
+  }
+
+  setHandler(prev => prev + 1);
 }
 
 const Order = () => {
@@ -31,8 +41,16 @@ const Order = () => {
     return matchesStatus && matchesSearch;
   });
   useEffect(()=>{
+    if(window?.localStorage?.tabs && window?.localStorage?.tabs != filter){
+      setFilter(window.localStorage.tabs)
+    }else if(!window?.localStorage?.tabs){
+      window.localStorage.tabs = filter
+    }
      const getorders = async () => {
-      let data = await (await fetch(`${API_BASEURL}/order`,{method:'GET',credentials:'include'})).json()
+      const token = localStorage.getItem("token"); 
+      let data = await (await fetch(`${API_BASEURL}/order`,{method:'GET',credentials:'include',    headers: {
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },})).json()
       setOrders(data.data)
 }
    getorders()
@@ -40,7 +58,10 @@ const Order = () => {
   },[])
     useEffect(()=>{
      const getorders = async () => {
-      let data = await (await fetch(`${API_BASEURL}/order`,{method:'GET',credentials:'include'})).json()
+      const token = localStorage.getItem("token"); 
+      let data = await (await fetch(`${API_BASEURL}/order`,{method:'GET',credentials:'include',    headers: {
+      ...(token && { Authorization: `Bearer ${token}` }),
+    }})).json()
       setOrders(data.data)
 }
    getorders()
@@ -66,7 +87,10 @@ const Order = () => {
   {statuses.map((status) => (
     <button
       key={status}
-      onClick={() => setFilter(status)}
+      onClick={() => {
+        setFilter(status)
+        window.localStorage.tabs = status
+      }}
       className={`px-4 py-2 rounded-lg font-semibold shadow ${
         filter === status
           ? "bg-blue-600 text-white"

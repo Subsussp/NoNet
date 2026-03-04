@@ -32,10 +32,11 @@ const LocationMarker = ({ onSelect, value, setZipcode ,clickable = true}) => {
   return position ? <Marker position={position} /> : null;
 };
 
-const LocationPicker = ({ onLocationSelected, coords, setZipcode ,clickable}) => {
+const LocationPicker = ({ onLocationSelected, coords, setZipcode ,clickable,error}) => {
   return (
     <div
-      className="mt-1 relative z-0 w-full rounded-md border px-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+    draggable={false}
+      className={`mt-1 select-none relative z-0 w-full ${error && "border-red-400 border-4" } rounded-md border focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
       style={{ height: "420px" }} 
     >
       <MapContainer

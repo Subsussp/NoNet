@@ -6,7 +6,10 @@ const Users = () => {
     let [load,setLoad] = useState(false)
     let [Users,setUsers] = useState([])
     useEffect(() => {
-        axios.get(API_ADMIN + '/Users', { withCredentials: true }).then((res) => {
+        const token = localStorage.getItem("token"); 
+        axios.get(API_ADMIN + '/Users', { withCredentials: true ,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },}).then((res) => {
             setUsers(res.data)
             setLoad(true)
         })

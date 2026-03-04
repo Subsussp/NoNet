@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Heart, ShoppingBasket } from "lucide-react";
+import { useState } from "react";
 
 const Vitem = ({item})=> {
+  let [color,setcolor] = useState('var(--one)')
   return <li className="bg-mainele mb-[30px] overflow-hidden">
         <div className="w-full h-full bg-mainele flex items-center" >
         <Link to={`/items/${item._id}`}>
@@ -51,8 +53,10 @@ const Vitem = ({item})=> {
     className="wishlist btn-button bg-mainele transition duration-700 ease-in-out hover:bg-one hover:text-mainele text-one p-2" 
     type="button" 
     title="Add to Wish List" 
-    onClick="wishlist.add('841','image/products/1569664820web-template.png');">
-    <Heart/>
+    onClick={(e)=>{
+      color == "Red" ? setcolor('var(--one)') : setcolor('Red')
+    }}>
+    <Heart fill={color} color={color == "Red" ? "red" : ""} className="text-one"/>
   </button>
 
   {/* <!-- Quick View Button (Using Fancybox) --> */}

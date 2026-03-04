@@ -4,9 +4,8 @@ import Users from 'pages/users/Users'
 import { Shopcontext } from "pages/Root/Shop/Shop";
 import { fetchitems } from "utills/fetch";
 import { useQuery } from "@tanstack/react-query";
-import { data, Link, useLocation } from "react-router-dom";
+import { data, Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Sidebar from "pages/Admin/utills/AdminSidebar/Adminsidebar";
 import { 
     Sun,
     Moon,
@@ -26,7 +25,8 @@ import { API_ADMIN } from "Var/URLS";
 import { FaIntercom } from "react-icons/fa";
   
   
-const Adminpage = () => { 
+const Adminpage = ({setuserR,setAuth}) => { 
+  let navigate = useNavigate()
   const [salesData, setsalesData] = useState([]);
   const [OsalesData, setOsalesData] = useState([]);
   const [Orders, setOrders] = useState([]);
@@ -46,7 +46,16 @@ const Adminpage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_ADMIN + '/Gate',{withCredentials:true});
+        const token = localStorage.getItem("token"); 
+        const response = await axios.get(API_ADMIN + '/Gate',{withCredentials:true,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },});
+        if(!response.data.valid && response.data.valid != undefined){
+          window.sessionStorage.binar = false
+          setuserR("")
+          setAuth(false)
+          return navigate('/login')
+        }
         let users = response.data.totalUsers
         let salesByDay = response.data.salesByDay
         let Revenue = response.data.totalRevenue
@@ -55,14 +64,17 @@ const Adminpage = () => {
         let totalOrdersChange = response.data.totalOrdersChange
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const todaysOrdersCount = Orders.filter(order => {
+        const todaysOrdersCount = Orders?.filter(order => {
           const orderDate = new Date(order.createdAt);
           orderDate.setHours(0, 0, 0, 0);
           return orderDate.getTime() === today.getTime();
-        }).length;
-        setTotalorders(Orders.length)
-        Orders.reverse()
-        let recent = Orders.slice(0,8)
+        })?.length;
+        let recent = []
+        if(Orders?.length > 0){
+          setTotalorders(Orders.length)
+          Orders.reverse()
+          recent = Orders.slice(0,8)
+        }
         setTodaysOrdersCount(todaysOrdersCount)
         setrecentOrders(recent)
         setActiveUsers(users);

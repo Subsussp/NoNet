@@ -28,12 +28,10 @@ import Dashboard from 'pages/Dashboard/dashboard.jsx';
 import CheckoutForm from 'pages/process/Checkout.jsx';
 import Profile from 'pages/Account/Profile';
 import { useMotionValue, useSpring ,motion} from "framer-motion";
-import Footer from 'components/Footer';
 import Layout from 'components/Layout';
+import Preloader from 'Preloader';
 
 const App = () => {
-
-
   let {data: itemdata,refetch,isLoading} = useQuery({queryKey:['items'],queryFn:fetchitems})
   let {data: cartdata,refetch: refetchcart,isError,isFetched} = useQuery({queryFn:cahce,queryKey:['cart']})
   let [data,setdata] = useState(itemdata)
@@ -41,14 +39,17 @@ const App = () => {
   const [isDarkMode, setDarkMode] = useState((JSON.parse(window.localStorage.getItem('us-inf'))) ? (JSON.parse(window.localStorage.getItem('us-inf'))).mode === 'nv' : true);
   const [Auth,setAuth] = useState('')
   const [userR,setuserR] = useState('')
+  const [loadPre,setloadPre] = useState(false)
   const location = useLocation(); 
   const [smallsizw, setsmallsizw] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [userData, setUserData] = useState(null);
-     const [cursorVariant, setCursorVariant] = useState("default");
+  const [showPreloader, setShowPreloader] = useState(true);
+  const [done, setdone] = useState(false);
+  const [cursorVariant, setCursorVariant] = useState("default");
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-      useEffect(() => {
+  useEffect(() => {
     const mouseMove = e => {
         cursorX.set(e.clientX - 24);
         cursorY.set(e.clientY - 24);
@@ -88,9 +89,6 @@ const App = () => {
     useEffect(() => {
       if(window.localStorage?.alert == null || window.localStorage?.alert == 'true'){
         window.localStorage.alert = 'false'
-        alert(`To access the ADMIN PANEL, you MUST log in with:
-Email: admin1@gmail.com
-Password: 11`)
       }
   }, []);
   useEffect(() => {
@@ -142,7 +140,10 @@ Password: 11`)
 },[isDarkMode])
   useEffect(() => {
     if (Auth === '') {
-      axios.get(API_BASEURL, { withCredentials: true }).then((Res) => {
+      const token = localStorage.getItem("token"); 
+      axios.get(API_BASEURL, { withCredentials: true,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },}).then((Res) => {
         if(Res.data['us-va']){
           setuserR(Res.data['us-r'] =='cole'?'admin':'user')}
           setAuth(Res.data['us-va'])
@@ -153,33 +154,32 @@ Password: 11`)
   } ,[Auth])
      useEffect(() => {
     if(Auth && userR){
+      refetchcart()
+      console.log(cartdata)
+      const token = localStorage.getItem("token"); 
       fetch(`${API_BASEURL}/profile`, {
-        credentials: "include", // Important for session cookies
+        credentials: "include",   
+        headers:{
+          ...(token && { "Authorization": `Bearer ${token}`})
+        }
       })
-      .then((res) => res.json())
-      .then((data) => setUserData(data) )
+      .then(async(res) => res.json())
+      .then((data) => {setUserData(data) }
+    )  
       .catch((err) => console.error("Error fetching profile:", err));
     }
     }, [Auth]);
-
-  if(!fontsLoaded){
-    return (
-      <div className="flex items-center justify-center h-screen text-lg">
-        Loading fonts...
-      </div>
-    );
-  }
-  if(ref.current || isLoading || !isFetched || isError){  
-    return (<></>)
+  if((!ref.current && !isLoading && isFetched && !isError && fontsLoaded) && !done){
+    setdone(true)
   }
   return (
     <>
-   
-       <motion.div
+   {showPreloader && <Preloader delay={!!window.localStorage.getItem('alert') ? 120 : 620} onExit={() => setShowPreloader(false)} done={done}/>}
+      {done &&  <> <motion.div
               className='cursor'
                style={{
-                    x: smoothX, // animates left
-                    y: smoothY, // animates top
+                    x: smoothX, 
+                    y: smoothY, 
                 }}
               variants={variants}
               animate={cursorVariant}
@@ -187,16 +187,16 @@ Password: 11`)
     <Shopcontext.Provider value={data}>
                  {
                    location.pathname == '/' ? <div className='fullscreen-container' >
-                          <Header userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} textLeave={textLeave} textEnter={textEnter}/>
+                          <Header setloadPre={setloadPre} userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} textLeave={textLeave} textEnter={textEnter}/>
                           <Top darkmode={isDarkMode} textEnter={textEnter} textLeave={textLeave}/> 
                      </div>
      : ((!['/admin','/dashboard','/users','/orders','/control','/analytics'].includes(location.pathname)) && <Header userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />)}
     <Cartcontext.Provider value={{ cartdata, refetchcart }}> 
     <Routes>
-      <Route element={<Layout />}>
+      <Route element={<Layout textLeave={textLeave} textEnter={textEnter}/>}>
       {/* Public Routes */}
-      <Route path='/login' element={<Account textLeave={textLeave} textEnter={textEnter} setAuth={setAuth} setuserR={setuserR} login={true} />}/>
-      <Route path='/signup' element={<Account textLeave={textLeave} textEnter={textEnter} login={false} />}/>
+      <Route path='/login' element={<Account loadPre={loadPre} textLeave={textLeave} textEnter={textEnter} setAuth={setAuth} setuserR={setuserR} login={true} />}/>
+      <Route path='/signup' element={<Account loadPre={loadPre} textLeave={textLeave} textEnter={textEnter} login={false} />}/>
       <Route index element={<Userpage textEnter={textEnter} textLeave={textLeave} refetch={refetch} isDarkMode={isDarkMode}/>}/>
       <Route path='/items/:id' element={<Getitempage textEnter={textEnter} textLeave={textLeave} />}/>   
       <Route path='/process' element={<CheckoutForm textEnter={textEnter}  textLeave={textLeave} />}/>       
@@ -207,7 +207,7 @@ Password: 11`)
         <Route path='/profile' element={
       userData ? <Profile textEnter={textEnter} initialData={userData} setUserData={setUserData} textLeave={textLeave}/> : <div>Loading...</div>
     }/>       
-        <Route path='/cart' element={<Cart textEnter={textEnter} textLeave={textLeave} />}/>       
+        <Route path='/cart' element={<Cart Auth={Auth} textEnter={textEnter} textLeave={textLeave} />}/>       
         <Route path='/logout' element={<Logout textEnter={textEnter} textLeave={textLeave} setAuth={setAuth} setuserR={setuserR} />} />
         <Route path='/cart/add-to-cart' element={<Addcart textEnter={textEnter} textLeave={textLeave}/>}/>       
         <Route path='/store' element={<Store BestSellerAndMain={true} smallsize={smallsizw} textEnter={textEnter} textLeave={textLeave} Catg={!data ? [] : data.map((value)=>value.catg)} />}/>
@@ -222,7 +222,7 @@ Password: 11`)
             <Route path="/orders" element={<Order textEnter={textEnter} textLeave={textLeave}/>} />
             <Route path="/analytics" /> 
             <Route path="/control" element={<Products textEnter={textEnter} textLeave={textLeave} data={data} refetch={refetch} /> }/>
-            <Route path="/admin" element={<Adminpage textEnter={textEnter} textLeave={textLeave}/>} />
+            <Route path="/admin" element={<Adminpage setuserR={setuserR} setAuth={setAuth} textEnter={textEnter} textLeave={textLeave}/>} />
             <Route path="/users" element={<Users textEnter={textEnter} textLeave={textLeave}/>} />
           </Route>
         </Route>  
@@ -231,8 +231,8 @@ Password: 11`)
     </Routes>
     {/* {smallsizw && <Navigator userR={userR}/>} */}
     </Cartcontext.Provider>
-    </Shopcontext.Provider>
-
+    </Shopcontext.Provider>   </>
+}
   </>
 
  )}

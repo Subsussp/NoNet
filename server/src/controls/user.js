@@ -2,7 +2,7 @@ const users = require('../models/user.js')
 const {auth,gen} = require("../utils/authpg.js");
 
 
-let regestier =  async function (req, res,next) {
+let register =  async function (req, res,next) {
     let hashsalt = gen(req.body.psswd);
     let user = await users.findOne({Phonenumber:req.body.Phonenumber}).then((user)=>user).catch((err)=>{console.log(err)})
     if(user){
@@ -10,15 +10,26 @@ let regestier =  async function (req, res,next) {
     }
 
       try {  
-        if(req.body.invitecode.toLowerCase() == 'ftadmin'){
-                 await users.create({
-          name: req.body.username,
-          Phonenumber:req.body.Phonenumber,
-          email: req.body.email,
-          hash: hashsalt.hash,
-          salt: hashsalt.salt,
-          role: 'admin'
-        }); 
+        if(req.body?.invitecode){
+            if (req.body.invitecode.toLowerCase()== 'ftadmin'){
+                await users.create({
+                name: req.body.username,
+                Phonenumber:req.body.Phonenumber,
+                email: req.body.email,
+                hash: hashsalt.hash,
+                salt: hashsalt.salt,
+                role: 'admin'
+                }); 
+            }else{
+                await users.create({
+                name: req.body.username,
+                Phonenumber:req.body.Phonenumber,
+                email: req.body.email,
+                hash: hashsalt.hash,
+                salt: hashsalt.salt,
+                });
+            }
+
     }else{
           await users.create({
           name: req.body.username,
@@ -55,7 +66,7 @@ let patchuser = async function (req,res,next){
     }
     function showprofile(req, res) {
          if (!req.session.user) {
-        return res.status(401).json({ error: "Not logged in" });
+            return res.status(401).json({ error: "Not logged in" });
         }
         const { name, email, Phonenumber,url} = req.session.user;
         res.json({
@@ -65,4 +76,4 @@ let patchuser = async function (req,res,next){
             url
         });
     }
-module.exports = {patchuser,showprofile,regestier}
+module.exports = {patchuser,showprofile,register}

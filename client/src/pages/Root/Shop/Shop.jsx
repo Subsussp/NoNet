@@ -10,23 +10,33 @@ import Delete  from "pages/Admin/Delete.jsx";
 import ProductPage from 'pages/ItemPage/Productpage.jsx';
 import SideNotification from 'pages/Admin/utills/showNotif.jsx';
 import { API_BASEURL } from 'Var/URLS.js';
+import Preloader from 'Preloader.jsx';
 // import Maincontentwraper from 'pages/Admin Header (Not a route)/Maincontent.jsx';
 export let Shopcontext = createContext()
 export let Cartcontext = createContext()
 
 
 async function getproduc(id){
-  let a = await axios.get(API_BASEURL + `/items/${id}`, {withCredentials:true}).catch((res) => res)
+  const token = localStorage.getItem("token"); 
+  
+  let a = await axios.get(API_BASEURL + `/items/${id}`, {withCredentials:true,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },}).catch((res) => res)
   let data = await a.data
-  console.log(data)
   return data
 }
 async function cahce(){
-    let html = await axios.get(API_BASEURL + `/cart`, {withCredentials:true})
+    const token = localStorage.getItem("token"); 
+    let html = await axios.get(API_BASEURL + `/cart`, {withCredentials:true,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },})
     return html
 }
 async function addtocart(id){
-    let html = await axios.get(API_BASEURL + `/cart/add-to-cart?pr_id=${id}`, {withCredentials:true})
+  const token = localStorage.getItem("token");   
+  let html = await axios.get(API_BASEURL + `/cart/add-to-cart?pr_id=${id}`, {withCredentials:true,  headers: {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  },})
 }
 const Getitempage = () => {
   const { id } = useParams()
@@ -41,7 +51,6 @@ const Getitempage = () => {
   if(Object.values(data).length < 1){
     return <></>
   }
-  console.log(data)
       return data ? (<ProductPage refe={id} data={data}/>) : <Noroute/>
 }
 
@@ -63,10 +72,12 @@ const Addcart = () => {
       setload(false)
     })
   },[id])
-  if(loading || isFetching){
-    return <></>
-  }
-  return navigate(redirect, { replace: true }) 
+  useEffect(()=>{
+    if(!loading && !isFetching){ 
+      navigate(redirect, { replace: true }) 
+     }
+  },[loading , isFetching,navigate, redirect])
+  return <Preloader/>
 }
 
 
@@ -99,7 +110,6 @@ const Cart = () => {
       </div>
     );
   }
-
   if (isError) {
     return (
       <div className="text-center text-red-600 font-semibold py-6">
@@ -115,7 +125,13 @@ const Cart = () => {
       </div>
     );
   }
-
+if(!data?.data?.valid && data.data.length < 1 ){
+    refetchcart()
+    refetch()
+    return <div className="text-center text-red-600 font-semibold py-6">
+        Error loading the cart. Please try again.
+      </div>
+  }
   async function HandleDelete() {
     await refetch();
   }
@@ -141,9 +157,12 @@ const Cart = () => {
   async function updateQuantity(id, newQuantity) {
     if (newQuantity < 1) return;
     try {
+      const token = localStorage.getItem("token"); 
       const res = await fetch(`${API_BASEURL}/cart`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
         credentials: "include",
         body: JSON.stringify({ id, quantity: newQuantity }),
       });
@@ -160,7 +179,7 @@ const Cart = () => {
   const handleOrderNow = () => {
     navigate("/process");
   };
-
+  console.log(data.data)
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4 ">
       {data.data.map((item) => (
