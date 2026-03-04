@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/NoNet/static/css/main.1d92cfc7.css",
-    "main.js": "/NoNet/static/js/main.c4a002b3.js",
+    "main.css": "/NoNet/static/css/main.efa48b9b.css",
+    "main.js": "/NoNet/static/js/main.8ade533f.js",
     "static/js/308.a3c3dcb4.chunk.js": "/NoNet/static/js/308.a3c3dcb4.chunk.js",
     "static/js/453.258b012d.chunk.js": "/NoNet/static/js/453.258b012d.chunk.js",
     "static/media/herobg.png": "/NoNet/static/media/herobg.ad33add2430e34307c33.png",
@@ -24,17 +24,18 @@
     "static/media/Poppins-ExtraBold.ttf": "/NoNet/static/media/Poppins-ExtraBold.01849ee091e1762a5dd5.ttf",
     "static/media/Poppins-Black.ttf": "/NoNet/static/media/Poppins-Black.d8b850b920a5ef49d752.ttf",
     "static/media/Cinzel-VariableFont_wght.ttf": "/NoNet/static/media/Cinzel-VariableFont_wght.7aeb3adcf73e49e8a979.ttf",
+    "static/media/DisplayNarrowExtraLight.ttf": "/NoNet/static/media/DisplayNarrowExtraLight.b7cc59eed40e1a483948.ttf",
     "static/media/Parkinsans-VariableFont_wght.ttf": "/NoNet/static/media/Parkinsans-VariableFont_wght.418c07df12aedff7e676.ttf",
     "static/media/Baltidore-p7eEO.ttf": "/NoNet/static/media/Baltidore-p7eEO.4eaf9ef1ae03dd32a727.ttf",
     "static/media/TCCB.TTF": "/NoNet/static/media/TCCB.e8faa1eb0bf755520743.TTF",
     "index.html": "/NoNet/index.html",
-    "main.1d92cfc7.css.map": "/NoNet/static/css/main.1d92cfc7.css.map",
-    "main.c4a002b3.js.map": "/NoNet/static/js/main.c4a002b3.js.map",
+    "main.efa48b9b.css.map": "/NoNet/static/css/main.efa48b9b.css.map",
+    "main.8ade533f.js.map": "/NoNet/static/js/main.8ade533f.js.map",
     "308.a3c3dcb4.chunk.js.map": "/NoNet/static/js/308.a3c3dcb4.chunk.js.map",
     "453.258b012d.chunk.js.map": "/NoNet/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1d92cfc7.css",
-    "static/js/main.c4a002b3.js"
+    "static/css/main.efa48b9b.css",
+    "static/js/main.8ade533f.js"
   ]
 }
