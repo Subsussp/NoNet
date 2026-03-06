@@ -1,8 +1,8 @@
-# Elegant E-Commerce Store
+# Elegant website 
 
-It's a simple E-Commerce Store designed in a modern way with love :)
-. While the project isn’t 100% complete, it includes many working features and showcases a solid foundation.
+It's a simple E-Commerce Store designed in a modern way with love ;)
 
+I spent more than 6 months on this project and i literally have learned a ton and i have enjoyed the journey so far and if anyone wants any help, here is my email sofaomda738@gmail.com
 
 ## A Glimpse Inside
 
@@ -26,15 +26,17 @@ To explore the admin features, use the following credentials:
 - User authentication system (register/login/logout)
 - Fully functional cart and checkout flow
 - Order system with backend integration
+- Admin panel with most of what an admin needs
 - Address selection via interactive map
 
 ## Note
 
-This is still a work-in-progress. A few features are either incomplete or simplified due to time constraints, but the core systems are up and running.
+Sorry if some features aren't styled 
+time constraints and bad sleep with back pain they demolished me so just focus on the technical stuff 
 
 ## Tech Stack
 
-Here’s what powers the project:
+Here’s what i used:
 
 - ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white&style=flat-square) **React**
 - ![Node.js](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white&style=flat-square) **Node.js**
@@ -43,6 +45,4 @@ Here’s what powers the project:
 - ![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=flat-square) **Redis**
 
 
-## Thanks for checking it out!
-
-I spent a lot on this project and I'm always improving so if you have any recommendations or tips on what to improve here is my email sofaomda738@gmail.com
+## Thanks for checking it out <3
