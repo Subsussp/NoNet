@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/NoNet/static/css/main.eb2c0288.css",
-    "main.js": "/NoNet/static/js/main.3756a146.js",
+    "main.css": "/NoNet/static/css/main.1097a755.css",
+    "main.js": "/NoNet/static/js/main.1090c777.js",
     "static/js/308.a3c3dcb4.chunk.js": "/NoNet/static/js/308.a3c3dcb4.chunk.js",
     "static/js/453.258b012d.chunk.js": "/NoNet/static/js/453.258b012d.chunk.js",
     "static/media/herobg.png": "/NoNet/static/media/herobg.ad33add2430e34307c33.png",
@@ -27,15 +27,15 @@
     "static/media/DisplayNarrowExtraLight.ttf": "/NoNet/static/media/DisplayNarrowExtraLight.b7cc59eed40e1a483948.ttf",
     "static/media/Parkinsans-VariableFont_wght.ttf": "/NoNet/static/media/Parkinsans-VariableFont_wght.418c07df12aedff7e676.ttf",
     "static/media/Baltidore-p7eEO.ttf": "/NoNet/static/media/Baltidore-p7eEO.4eaf9ef1ae03dd32a727.ttf",
-    "static/media/TCCB.TTF": "/NoNet/static/media/TCCB.e8faa1eb0bf755520743.TTF",
+    "static/media/TCCB.ttf": "/NoNet/static/media/TCCB.e8faa1eb0bf755520743.ttf",
     "index.html": "/NoNet/index.html",
-    "main.eb2c0288.css.map": "/NoNet/static/css/main.eb2c0288.css.map",
-    "main.3756a146.js.map": "/NoNet/static/js/main.3756a146.js.map",
+    "main.1097a755.css.map": "/NoNet/static/css/main.1097a755.css.map",
+    "main.1090c777.js.map": "/NoNet/static/js/main.1090c777.js.map",
     "308.a3c3dcb4.chunk.js.map": "/NoNet/static/js/308.a3c3dcb4.chunk.js.map",
     "453.258b012d.chunk.js.map": "/NoNet/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.eb2c0288.css",
-    "static/js/main.3756a146.js"
+    "static/css/main.1097a755.css",
+    "static/js/main.1090c777.js"
   ]
 }
