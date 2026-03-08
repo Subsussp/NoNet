@@ -5,6 +5,9 @@ let isAuth =async function (req, res, next) {
     if(req.session.user){
         return next()
     }
+    if (!authHeader) {
+        return res.status(401).json({ error: "No token provided" });
+    }
     else if(authHeader){
         try {
             const token = authHeader.split(" ")[1];

@@ -5,6 +5,7 @@ import { FaSearch, FaMapMarkerAlt, FaCheck, FaTimes } from "react-icons/fa";
 import { API_BASEURL } from "Var/URLS"
 import LocationPicker from "./Mapicker"
 import LocationPickerModal from "./LocationPickerModal ";
+import Loader from "Loader";
 
 async function updateOrderStatus(_id, status, setHandler,notify) {
   const token = localStorage.getItem("token"); 
@@ -31,6 +32,7 @@ const Order = ({textEnter,textLeave,notify}) => {
   const [locationModal, setLocationModal] = useState({ open: false, coords: null });
   const statuses = ["All","Pending", "Shipped", "Delivered", "Cancelled",];
   const [showDetails, setShowDetails] = useState([false,'']);
+  const [load, setLoad] = useState(true);
 
   const filteredOrders = orders.filter(order => {
     const matchesStatus = filter === "All" || order.orderStatus === filter.toLocaleLowerCase();
@@ -67,12 +69,9 @@ const Order = ({textEnter,textLeave,notify}) => {
    getorders()
 
   },[handler])
-  if(orders.length < 1){
-    return (
-        <div>Loading...</div>)
-  }
-
-  return (
+  return (<>
+    {load && <Loader onExit={()=> setLoad(false)} done={orders.length < 1} Idelay={2}/>}
+{!(orders.length < 1) &&
     <div className="w-full h-screen bg-gray-50 p-6 flex flex-col font-[Poppins]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 select-none cursor-default">
@@ -237,6 +236,8 @@ const Order = ({textEnter,textLeave,notify}) => {
         />
       )}
     </div>
+    }
+    </>
   );
 }
 export default Order

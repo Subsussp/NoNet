@@ -246,7 +246,7 @@ const Adminpage = ({setuserR,setAuth,darkMode}) => {
           </div>
           </div>
         </main>}
-        {load && <Loader onExit={()=> setLoad(false)} done={loading}/>}
+        {load && <Loader onExit={()=> setLoad(false)} done={loading} />}
     
             {/* // <Users/>
             // <Orders/> 

@@ -15,7 +15,6 @@ OrderRout.route('/process').post(async function (req,res,next) {
  try {
     const userId = req.session?.user?._id;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
-
     const user = await Users.findById(userId).populate('cart.product');
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -38,12 +37,10 @@ return {
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-
+    let email = user.email;
+    let phone = user.Phonenumber;
+    let fullName = user.name;
     const {
-  firstName,
-    lastName,
-    email,
-    phone,
     address,
     city,
     coords,
@@ -55,10 +52,6 @@ return {
     cardExpiry,
     cardCvc 
     } = req.body;
-
-    const fullName = `${firstName} ${lastName}`;
-
-    // Create the order
     const newOrder = await Order.create({
       user: userId,
       items: orderItems,
@@ -79,7 +72,6 @@ return {
       orderStatus: 'pending',
     });
 
-    // Clear user's cart after order creation
     user.cart = [];
     user.orders.push({orderid:newOrder._id,date: new Date()});
     await user.save();

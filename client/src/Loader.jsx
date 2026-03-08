@@ -2,14 +2,14 @@ import gsap from 'gsap';
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-const Loader = ({done,onExit}) => { 
+const Loader = ({done,onExit,Idelay = 4}) => { 
     let preloaderRef = useRef()
     useEffect(()=>{
     if (done) {
       gsap.to(preloaderRef.current, {
         opacity: 0,
         duration: 0.5,  
-        delay: 4,
+         delay:Idelay,
         ease: "power2.inOut",
         onComplete: onExit,
       });
