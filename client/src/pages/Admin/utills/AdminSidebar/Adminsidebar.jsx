@@ -3,7 +3,7 @@ import navItems from "./Menu"
 import { IconContext } from "react-icons";
 import { User ,CircleArrowOutDownLeft ,ArrowDownToDot , CircleArrowOutUpLeft,CircleArrowOutUpRight, ArrowLeftRight, CircleDotDashed  } from 'lucide-react';
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 let Sidebar = ({setShow,showList}) => {
     const [icon, setIcon] = useState("play");
@@ -27,7 +27,7 @@ let Sidebar = ({setShow,showList}) => {
         setTimeout(() => setIcon("play"), 450);
       }
     },[])
-    return  (<div className={`fixed block top-[2.1%] h-fit inset-y-0 left-[50%] z-50 w-64 -translate-x-[50%] transform transition-transform duration-300 ease-in-out `}>
+    return  (<div className={`fixed select-none block top-[1.9%] h-fit inset-y-0 left-[50%] z-50 w-64 -translate-x-[50%] transform transition-transform duration-300 ease-in-out `}>
     <div className="flex items-center flex-col flex-nowrap p-3">
     <li style={{'cursor':'pointer'}} className="text-one no-underline cursor-pointer text-interactive-primary hover:text-interactive-primary-hover disabled:pointer-events-none disabled:opacity-40 sc-28e98bbc-0 CrMKY flex items-center justify-center" 
                     onClick={(e)=>{
@@ -61,28 +61,33 @@ let Sidebar = ({setShow,showList}) => {
                 </li>
       <h1 className={`text-xl font-Second font-bold text-one`}>Panel</h1>
     </div>
-    {icon == 'done' &&(
-       <motion.span
-       key={icon} // Forces re-render for smooth animation
-       initial={{ opacity: 0, scale: 0.5 }}
-       animate={{ opacity: 1, scale: 1 }}
-       exit={{ opacity: 0, scale: 0.5 }}
-       transition={{ duration: 0.2 }}
-       >
-      <nav className="mt-[9px] justify-center flex items-center flex-nowrap flex-col bg-mainele border-x border-b border-one ">
-      {navItems.map((item, index) => {
-        return  <Link 
+    
+<AnimatePresence mode="wait">
+  {icon === "done" && (
+   <motion.span
+  key={icon}
+  initial={{ opacity: 0 }}
+  animate={{ opacity: icon === "done" ? 1 : 0}}
+  exit={{ opacity: 0}}
+  transition={{ duration: 0.4 }}
+>
+  <nav className="mt-[9px] justify-center flex items-center flex-nowrap flex-col bg-mainele border-x border-b border-one">
+    {navItems.map((item, index) => {
+      return (
+        <Link
           key={index}
           to={item.href}
-          className={`flex items-center justify-center w-full hover:bg-gray-700 py-3 font-Main font-[600] tracking-[0.1em] text-sm ${item.active &&
-            'hover:bg-gray-700 hover:text-white'}`}
-            >
+          className={`flex items-center transition-all duration-200 justify-center w-full hover:bg-gray-700 py-3 font-Main font-[600] tracking-[0.1em] text-sm ${
+            item.active && "hover:bg-gray-700 hover:text-white"
+          }`}
+        >
           {item.icon}
-          <span className="ml-3 text-one" >{item.label}</span>
-        </Link>}
-      )}
-    </nav>                          </motion.span>
-)}
+          <span className="ml-3 text-one">{item.label}</span>
+        </Link>
+      );
+    })}
+  </nav>
+</motion.span>) }</AnimatePresence>
   </div>) 
 }
 export default Sidebar

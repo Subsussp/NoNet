@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import "./Preloader.css";
+import "./Loader.css";
 
 const images = [
   "https://res.cloudinary.com/dv1xhfwqd/image/upload/f_auto,q_auto/v1772651109/1_p_jvlcoj.png",
@@ -85,7 +86,7 @@ const Preloader = ({ onExit, done ,delay = 120,opacityDe = 2.2}) => {
     >
       <div className="fixed inset-0 flex items-center z-[9999999] justify-center opacity-100 transition-opacity duration-[1500ms] ease-out w-screen h-dvh">
  {images[index] && <img       
-    style={{"mix-blend-mode":"screen", willChange: "opacity, transform,content" }}
+    style={{"mixBlendMode":"screen", willChange: "opacity, transform,content" }}
     ref={loaderRef}
     src={loadedImagesRef.current[index]?.src || images[index]}
     alt={`Loading icon ${index}`}

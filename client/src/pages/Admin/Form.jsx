@@ -33,7 +33,7 @@ export function Form({onClose,formData2,setFormData2,showForm,handleQuantityChan
   };
 
   return (
-<div className="py-12 px-4 sm:px-6 lg:px-8 top-0 z-50 w-full fixed inset-0 flex items-center justify-center p-4">
+<div className="py-12 px-4 sm:px-6 lg:px-8 top-0 z-[1000] w-full fixed inset-0 flex items-center justify-center p-4">
 <div className="max-w-3xl mx-auto w-full h-full">
   <div className="bg-white shadow-xl rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto px-8">
     <div className="px-6 py-8 ">

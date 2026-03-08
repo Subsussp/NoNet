@@ -65,9 +65,9 @@ const Userpage = ({refetch,textEnter,textLeave}) => {
         <article className="Mid"><Link to={'/store'}><h2>Store</h2></Link></article>
         <Store textEnter={textEnter} textLeave={textLeave} smallsize={smallsize} BestSellerAndMain={true} Catg={!data ? [] : data.map((value)=>value.catg)} />
         </div>
-        <article className="info w-full h-[700px] bg-mainele">
+        {/* <article className="info w-full h-[700px] bg-mainele"> */}
             {/* <h1>Contact us</h1> */}
-        </article>
+        {/* </article> */}
     </>
     )
 }

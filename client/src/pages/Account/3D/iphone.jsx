@@ -78,10 +78,8 @@ const LoginForm = forwardRef(({screenData,login,setAuth,setuserR,textLeave,textE
           distanceFactor={1}
           scale={4}
           style={{
-            transformStyle: "preserve-3d",
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            willChange:"transform"
           }}
           zIndexRange={[14, 14]} 
           occlude 

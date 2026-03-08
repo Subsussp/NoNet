@@ -9,7 +9,7 @@ import SideNotification from 'pages/Admin/utills/showNotif';
 import { Edit } from 'lucide-react';
 import { API_BASEURL, API_PRODUCTS } from 'Var/URLS';
 const Aitem = ({item,onClose,refresh,showForm,setShowForm})=>{
-    const [state,setstate] = useState([false,'',''])
+    const [state2,setstate] = useState([false,'',''])
     const [formData2, setFormData2] = useState({
         _id: item._id,
            name: item.name,
@@ -64,8 +64,8 @@ const Aitem = ({item,onClose,refresh,showForm,setShowForm})=>{
             } 
     };
     return ( <div className='T'>
-        {state[0] && createPortal(
-                    <SideNotification type={state[2]} message={state[1]} setState={setstate}/>,
+        {state2[0] && createPortal(
+                    <SideNotification type={state2[2]} message={state2[1]} setState={setstate}/>,
                     document.body) }
         <div className='item-holder'>
                 <Delete refresh={refresh} Config={{ url: `${API_PRODUCTS}/${formData2._id}` }} id={formData2._id} />
@@ -104,7 +104,7 @@ const Aitem = ({item,onClose,refresh,showForm,setShowForm})=>{
             <p className="text-gray-900 text-2xl font-bold">${formData2.price}</p>
         <div className='flex-cl'>
         <div style={{'maxWidth':'fit-content'}} className="left flex small items-center rounded border border-two dark:border-two">
-                        <label htmlFor="Quantity" className="sr-only"> Quantity </label>
+                        <label htmlFor={`quantity ${formData._id}`} className="sr-only"> Quantity </label>
                             <button
                                 type="button"
                                 onClick={() => handleQuantityChange(formData.quantity <= 1 ? 0 : -1)}
@@ -118,8 +118,8 @@ const Aitem = ({item,onClose,refresh,showForm,setShowForm})=>{
                                 onChange={handleChange}
                                 placeholder="quantity"
                                 required
-                                id="quantity"
-                                className="h-10 w-4 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm dark:bg-gray-900 dark:text-black [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
+                                id={`quantity ${formData._id}`}
+                                className="h-10 quantity w-4 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
                             <button
                                 type="button"
                                 onClick={() => handleQuantityChange(1)}
@@ -138,11 +138,11 @@ const Aitem = ({item,onClose,refresh,showForm,setShowForm})=>{
                     Update Item
                 </button>
             </div>
-            {state[0] && createPortal(
-                    <SideNotification type={state[2]} message={state[1]} setState={setstate}/>,
+            {state2[0] && createPortal(
+                    <SideNotification type={state2[2]} message={state2[1]} setState={setstate}/>,
                     document.body)}
         {(showForm[0] && showForm[1] == 'Update' && showForm[2] == formData._id) ?createPortal(
-            <Update setstate={setstate} state={state} refresh={refresh} formData2={formData2} showForm={showForm} onClose={onClose} formData={formData2} setFormData2={setFormData2} /> ,
+            <Update setstate={setstate} state={state2} refresh={refresh} formData2={formData2} showForm={showForm} onClose={onClose} formData={formData2} setFormData2={setFormData2} /> ,
     document.body): <></>} 
     </div>
         )

@@ -6,7 +6,7 @@ import { API_BASEURL } from "Var/URLS"
 import LocationPicker from "./Mapicker"
 import LocationPickerModal from "./LocationPickerModal ";
 
-async function updateOrderStatus(_id, status, setHandler) {
+async function updateOrderStatus(_id, status, setHandler,notify) {
   const token = localStorage.getItem("token"); 
   const response = await fetch(`${API_BASEURL}/order/process`, {
     method: 'PATCH',
@@ -19,11 +19,11 @@ async function updateOrderStatus(_id, status, setHandler) {
   if (!response.ok) {
     throw new Error('Failed to update order status');
   }
-
+  notify()
   setHandler(prev => prev + 1);
 }
 
-const Order = () => {
+const Order = ({textEnter,textLeave,notify}) => {
   const [orders,setOrders] = useState([])
   const [filter, setFilter] = useState("Pending");
   const [search, setSearch] = useState("");
@@ -73,14 +73,14 @@ const Order = () => {
   }
 
   return (
-    <div className="w-full h-screen bg-gray-50 p-6 flex flex-col font-Poppins">
+    <div className="w-full h-screen bg-gray-50 p-6 flex flex-col font-[Poppins]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold text-gray-800 font-Cinzel">Orders</h1>
-          <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium shadow-sm">
+      <div className="flex items-center justify-between mb-4 select-none cursor-default">
+        <h1 onMouseEnter={textEnter} onMouseLeave={textLeave}  className="text-3xl font-bold text-gray-800 font-[Cinzel]">Orders</h1>
+          <span onMouseEnter={textEnter} onMouseLeave={textLeave} className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium shadow-sm transition-all duration-200 shadow-md hover:bg-gray-50">
         Pending: {orders.filter(order => order.orderStatus === "pending").length}
       </span>
-          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium shadow-sm">
+          <span onMouseEnter={textEnter} onMouseLeave={textLeave} className="px-3 py-1 bg-[#1d6b9226] text-[var(--sa)] rounded-full text-sm font-medium shadow-sm transition-all duration-200 shadow-md hover:bg-gray-50">
         Shipped: {orders.filter(order => order.orderStatus === "shipped").length}
       </span>
      <div className="flex flex-wrap gap-2 mb-4">
@@ -93,7 +93,7 @@ const Order = () => {
       }}
       className={`px-4 py-2 rounded-lg font-semibold shadow ${
         filter === status
-          ? "bg-blue-600 text-white"
+          ? "bg-gray-800 text-white"
           : "bg-gray-200 hover:bg-gray-300"
       }`}
     >
@@ -127,9 +127,8 @@ const Order = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white shadow-md rounded-lg p-4 grid grid-cols-[1fr_auto] gap-4 items-start"
-      style={{ minHeight: '140px' }} // prevent too small when details hidden
+      style={{ minHeight: '140px' }} 
     >
-      {/* Left side: Main order info and toggle + details */}
       <div className="flex flex-col space-y-1">
         <h2 className="font-semibold text-lg">{order.shippingAddress.fullName}</h2>
         <p className="text-gray-600 text-sm py-1 flex items-center">
@@ -162,7 +161,7 @@ const Order = () => {
         {/* Details toggle */}
         <button
           onClick={() => setShowDetails([showDetails[1] == order._id ?!showDetails[0] : true ,order._id])}
-          className="mt-2 inline-block text-blue-600 hover:text-blue-800 font-medium focus:outline-none"
+          className="mt-2 inline-block text-[var(--two)] hover:text-[var(--sa)] font-medium focus:outline-none"
           aria-expanded={showDetails[0]}
           aria-controls={`order-details-${order._id}`}
         >
@@ -189,14 +188,14 @@ const Order = () => {
         </AnimatePresence>
       </div>
 
-      {/* Right side: ID and buttons */}
+      {/* Right side:*/}
       <div className="flex flex-col justify-between items-end space-y-3">
         <p className="font-mono font-semibold text-gray-600 select-text">#{order._id.slice(-6)}</p>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
           <button
             onClick={() => setLocationModal({ open: true, coords: order.shippingAddress.coords })}
-            className="px-3 py-2 bg-blue-500 text-white rounded-lg flex items-center space-x-1 hover:bg-blue-600 mb-2 sm:mb-0"
+            className="px-3 py-2 bg-[var(--two)] text-white rounded-lg flex items-center space-x-1 hover:bg-[var(--sa)] transition-all duration-300 mb-2 sm:mb-0"
           >
             <FaMapMarkerAlt />
             <span>Location</span>
@@ -206,14 +205,17 @@ const Order = () => {
             <div className="flex flex-col sm:flex-row gap-2">
               {order.orderStatus !== 'shipped' && (
                 <button
-                  onClick={() => updateOrderStatus(order._id, 'shipped', sethandler)}
+                  onClick={() => updateOrderStatus(order._id, 'shipped', sethandler,()=> {
+                    notify([true,"Marked as Shipped"])})}
                   className="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-semibold shadow"
                 >
                   On Its Way
                 </button>
               )}
               <button
-                onClick={() => updateOrderStatus(order._id, 'delivered', sethandler)}
+                onClick={() => updateOrderStatus(order._id, 'delivered', sethandler,()=>{
+                    notify([true,"Marked as Delivered"])
+                })}
                 className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow"
               >
                 Mark Delivered

@@ -55,7 +55,7 @@ const Getitempage = () => {
 }
 
 
-const Addcart = () => {
+const Addcart = ({setNotify}) => {
   let navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setload] = useState(true);
@@ -74,7 +74,8 @@ const Addcart = () => {
   },[id])
   useEffect(()=>{
     if(!loading && !isFetching){ 
-      navigate(redirect, { replace: true }) 
+      navigate(redirect, { replace: true })
+      setNotify([true,null]) 
      }
   },[loading , isFetching,navigate, redirect])
   return <Preloader/>
@@ -179,9 +180,9 @@ if(!data?.data?.valid && data.data.length < 1 ){
   const handleOrderNow = () => {
     navigate("/process");
   };
-  console.log(data.data)
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4 ">
+      <h1 className='text-xl py-2 px-4 border-b font-[var(--Main-font)] select-none'>Your Cart</h1>
       {data.data.map((item) => (
         <div
           key={item.data._id}
@@ -212,7 +213,9 @@ if(!data?.data?.valid && data.data.length < 1 ){
               </button>
             </div>
           </div>
-
+          <p className='px-4 font-[poppins] '>
+            ${item.data.price}
+          </p>
           <Delete
             Config={{ url: `${API_BASEURL}/cart`, config: { id: item.data._id } }}
             refresh={HandleDelete}
@@ -226,7 +229,7 @@ if(!data?.data?.valid && data.data.length < 1 ){
       <div className="text-center mt-6">
         <button
           onClick={handleOrderNow}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="px-4 py-2 font-[poppins] hover:bg-gray-900 text-white rounded-lg bg-black text-[600] transition"
         >
           Order Now
         </button>
@@ -259,7 +262,7 @@ const Root = ({userR ,isDarkMode}) => {
       return <></>
     }
     return (<Shopcontext.Provider value={data}>
-            {(showNoti[0]) ? <SideNotification setshowNoti={setshowNoti} type={showNoti[2]} message={showNoti[1]} /> : <></> }
+            {(showNoti[0]) ? <SideNotification setState={setshowNoti} type={showNoti[2]} message={showNoti[1]} /> : <></> }
              {component}</Shopcontext.Provider>)
   }
   

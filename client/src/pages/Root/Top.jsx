@@ -1,9 +1,34 @@
 import { Link } from 'react-router-dom'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 
-const Top = ({darkmode,textLeave,textEnter}) =>{ 
+const Top = ({darkmode,textLeave,textEnter,done}) =>{ 
     const [allow, setallow] = useState(false);
     const [smallsizw, setsmallsizw] = useState(false);
+    let maintext = useRef()
+    let subtext = useRef()
+    useEffect(()=>{
+      const isReload = sessionStorage.getItem("isReload");
+
+      if(subtext.current && maintext.current && done && isReload == "true"){
+      let tl = gsap.timeline()
+        tl.from(".char",     
+          {
+              duration: .95,
+              delay:1.2,
+              opacity:0,
+              stagger:0.07,
+              ease: "power2.out",
+        },).from(".word",{
+          y: 40,
+          duration: 1,
+          stagger:0.08,
+          ease: "power2.out",
+
+        },"<-.3")
+      }
+
+      },[done])
    useEffect(() => {
       const handleResize = () => {
         if(window.innerWidth <= 768){
@@ -12,7 +37,6 @@ const Top = ({darkmode,textLeave,textEnter}) =>{
             setsmallsizw(false)
         }
       };
-  
       handleResize(); // Run once on mount
       window.addEventListener("resize", handleResize);
   
@@ -62,16 +86,28 @@ const Top = ({darkmode,textLeave,textEnter}) =>{
         <Link to={`/cart`} draggable={allow} onClick={(e)=>{if(!allow){
           e.preventDefault()
        }}} className='main-div cursor-default select-none'>
-                <p className="main-title cursor-pointer" color='white' onMouseEnter={()=>{
+                <p ref={maintext} className="main-title cursor-pointer" color='white' onMouseEnter={()=>{
                   setallow(true)
                   textEnter()}} onMouseLeave={()=>{
                   setallow(false)
-                  textLeave()}}>Get it for free</p>
-                <p className="main-title1 cursor-pointer" color='white' onMouseEnter={()=>{
+                  textLeave()}}>
+                    {"Get it for free".split(' ').map((char,index)=><span  key={index} className='word inline-block'>
+                      <span className='opacity-1 char'>{char}</span>
+                      {index !== 3 && "\u00A0"}
+                      </span>
+                      )}
+                    </p>
+                <p ref={subtext} className="main-title1 cursor-pointer" color='white' onMouseEnter={()=>{
                   setallow(true)                  
                   textEnter()}} onMouseLeave={()=>{
                   setallow(false)
-                  textLeave()}}>Order Now</p>
+                  textLeave()}}>
+                        {"Order Now".split(' ').map((char,index)=><span  key={index} className='word inline-block'>
+                      <span className='opacity-1 char'>{char}</span>
+                      {index !== 1 && "\u00A0"}
+                      </span>
+                      )}
+                    </p>
         </Link>
       </div>
 }

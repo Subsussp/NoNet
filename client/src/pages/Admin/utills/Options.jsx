@@ -19,11 +19,11 @@ export default function Options({handleChange}) {
     <div className="mt-1 block w-full catgo">
         <label className="floating-label" htmlFor="Cat">
           {Selected ? Selected : 'Select a Category'}</label>
-        <select id="Cat" name="catg" onChange={(e)=>{
+        <select id="Cat" name="catg" value={'Menu'} onChange={(e)=>{
             setSelected(e.target.value)
             handleChange(e)
           }}>
-            <option value="" disabled selected>
+            <option value="" disabled>
               Menu
             </option>
           {Catg.map((option, index) => (

@@ -12,8 +12,8 @@ import { useContext } from "react";
 import { Menu, X } from 'lucide-react';
 import Tbreveal from "./Tbreveal.jsx";
 import { use } from "react";
-
-const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter,setloadPre}) => {
+import gsap from "gsap";
+const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter,setloadPre,showPreloader}) => {
     let [showList,setShow] = useState(false)
     let [searchParams,setSearchParams] = useState('')
     let ShopData = useContext(Shopcontext)
@@ -24,13 +24,45 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter,setloadPre}) =
     const [smallsizw, setsmallsizw] = useState(false);
     const [Trigger, setTrigger] = useState(false);
     const [loading, setloading] = useState(true);
-    const number = useRef(-1);
+    const underlineRef = useRef();
+    const reveal = useRef();
     const changeTheme = (theme) => {
         setDarkMode(!isDarkMode)
     };
     function trigger(e) {
         setTrigger(!Trigger)
     }
+    useEffect(()=>{
+        const isReload = sessionStorage.getItem("isReload");
+        if(showPreloader && reveal.current && isReload == "true" && location.pathname == "/"){
+            gsap.fromTo(
+            reveal.current,{
+                opacity: 0,
+
+            },
+    {
+                opacity: 1,
+                delay: 4.6,
+                ease:"power2.out",
+                duration: 3.5,
+            }
+            );
+        }
+    },[showPreloader,reveal.current])
+    useEffect(()=>{
+        const isReload = sessionStorage.getItem("isReload");
+        if(underlineRef?.current && showPreloader && isReload == "true" && location.pathname == "/"){
+        gsap.fromTo(underlineRef.current,     { width: 0 },        
+            { width: "100%",     
+                duration: 5,
+                ease: "power2.out",
+                yoyo:true,
+                onComplete: ()=>{
+                    sessionStorage.setItem("isReload", "false");
+                },
+            })
+        }
+    },[underlineRef.current,showPreloader])
     useEffect(() => {
       const handleResize = () => {
         if(window.innerWidth <= 768){
@@ -62,44 +94,47 @@ const Header = ({userR,setDarkMode,isDarkMode,textLeave,textEnter,setloadPre}) =
         }
     : {}; 
     return (
-        <header
- className={`${!["/signup","/login"].includes(location.pathname) ? "bg-mainele" : !isDarkMode &&"bg-mainele"}  border-gray-700 sticky top-0 z-50 flex flex-center flex-col flex-nowrap`} >
+        <header className={`${!["/signup","/login"].includes(location.pathname) ? "bg-mainele" : !isDarkMode &&"bg-mainele"}  border-gray-700 sticky top-0 z-50 flex flex-center flex-col flex-nowrap`} >
             <div
  className={`NN-main-header ${!["/signup","/login"].includes(location.pathname) && "bg-mainele"} 
-    ${!["/signup","/login"].includes(location.pathname) ? "border-b border-wone" : ""}`}>
+    `}>
+              <div
+        ref={underlineRef}
+        className={`absolute left-0 bottom-0 h-[1px] bg-one ${(sessionStorage.getItem("isReload") == "false" || location.pathname != "/" )&& "w-full"}`}
+      />
                 <div className="flex items-center h-16 justify-between" style={maskStyle}>
                     <div className="flex items-center space-x-8">
                         <h1 className="le-side-header text-one ">
-                            <Link onMouseEnter={textEnter} onMouseLeave={textLeave} to={'/'} >{storeName}</Link></h1>
-                        <div className="relative flex-1 max-w-xl">
-                                <button className="absolute inset-y-0 left-0 pl-3 flex items-center" onClick={trigger}>
-                                    <Search onMouseEnter={textEnter} onMouseLeave={textLeave} className={`h-5 w-5 text-${!Trigger ? 'one':'mainele'}`}/>
-                                </button>
-                            <input
-                            onMouseEnter={textEnter} onMouseLeave={textLeave} 
-                            onChange={(e)=>setSearchParams(e.target.value)}
-                            type="text"
-                            className={`${Trigger ? 'block' : 'hidden'} transition duration-300 ease-in-out w-full pl-10 pr-3 py-2 border rounded-lg bg-one text-mainele placeholder-gray-400 focus:outline-none`}
-                            placeholder="Search items, collections, and accounts"
-                            />
-                            <div className={`absolute ${(searchParams && ShopData) ? 'block' : 'hidden'} min-w-fit w-[60vw] min-h-fit h-[10vh]`}>
-                                {(searchParams && ShopData) && ShopData.map((item)=>{
-                                    if((item.name.toLowerCase().replaceAll(' ','')).includes(searchParams.toLowerCase().replaceAll(' ',''))){
-                                        return <li className="bg-one">
-                                                        <Link onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full h-full bg-one flex items-center" to={`/items/${item._id}`}>
-                                                            <img draggable='false'
-                                                            src={item.img[0]}
-                                                            alt={`${item.name} photo`}
-                                                            className={`w-[10vw] h-[10vw] block object-cover`}
-                                                            />
-                                                      <div className="ml-3 h-full">
-                                                            <h1 className="font-medium text-mainele">{item.name}</h1>
-                                                            <p className="ml-2 font-medium text-red-800">{item.desc}</p>
-                                                      </div>
-                                                        </Link>
-                                        </li>
-                                    }
-                                })}
+                            <Link ref={reveal} onMouseEnter={textEnter} onMouseLeave={textLeave} className={` ${location.pathname ==  '/' ? sessionStorage.getItem("isReload") == "false" ?  "opacity-1" : "opacity-0" : "opacity-1"}`} to={'/'} >{storeName}</Link></h1>
+                <div className="relative flex-1 max-w-xl">
+                    <button className="absolute inset-y-0 left-0 pl-3 flex items-center" onClick={trigger}>
+                        <Search onMouseEnter={textEnter} onMouseLeave={textLeave} className={`h-5 w-5 text-${!Trigger ? 'one':'mainele'}`}/>
+                    </button>
+                    <input
+                    onMouseEnter={textEnter} onMouseLeave={textLeave} 
+                    onChange={(e)=>setSearchParams(e.target.value)}
+                    type="text"
+                    className={`${Trigger ? 'block' : 'hidden'} transition duration-300 ease-in-out w-full pl-10 pr-3 py-2 border rounded-lg bg-one text-mainele placeholder-gray-400 focus:outline-none`}
+                    placeholder="Search items, collections, and accounts"
+                    />
+                    <div className={`absolute ${(searchParams && ShopData) ? 'block' : 'hidden'} min-w-fit w-[60vw] min-h-fit h-[10vh]`}>
+                    {(searchParams && ShopData) && ShopData.map((item)=>{
+                        if((item.name.toLowerCase().replaceAll(' ','')).includes(searchParams.toLowerCase().replaceAll(' ',''))){
+                            return <li className="bg-one">
+                                            <Link onMouseEnter={textEnter} onMouseLeave={textLeave} className="w-full h-full bg-one flex items-center" to={`/items/${item._id}`}>
+                                                <img draggable='false'
+                                                src={item.img[0]}
+                                                alt={`${item.name} photo`}
+                                                className={`w-[10vw] h-[10vw] block object-cover`}
+                                                />
+                                          <div className="ml-3 h-full">
+                                                <h1 className="font-medium text-mainele">{item.name}</h1>
+                                                <p className="ml-2 font-medium text-red-800">{item.desc}</p>
+                                          </div>
+                                            </Link>
+                            </li>
+                        }
+                    })}
                             </div>
                         </div>
                     </div>

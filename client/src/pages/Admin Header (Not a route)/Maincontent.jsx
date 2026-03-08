@@ -39,8 +39,11 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
     
     return <>
     
-            <div className={`sticky top-0 z-40 flex flex-center flex-col flex-nowrap `}>
+            <div className={`sticky top-0 z-[90] flex flex-center flex-col flex-nowrap `}>
             <div className={`NN-main-header bg-mainele justify-between sticky top-0`}>
+                              <div
+        className={`absolute left-0 bottom-0 h-[1px] bg-one w-full`}
+      />
                 <div className="flex items-center -ml-3 h-16 justify-between">
                     <div className="flex items-center space-x-8">
                         <h1 className="le-side-header text-one ">
@@ -119,7 +122,7 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
             </div>
         }       
              {(showList && smallsizw) && 
-        <div className={`block bg- shadow-lg fixed top-0 left-0 w-screen h-screen `}>
+        <div className={`block z-[100] shadow-lg fixed top-0 left-0 w-screen h-screen `}>
             <div className="px-2 pt-2 pb-3 space-y-1 bg-mainele sm:px-3  h-screen  w-[100vw] flex items-center flex-col overflow-y-auto">
             <button
                 onClick={()=>{
@@ -169,8 +172,9 @@ let Maincontentwraper = ({userR ,setDarkMode, isDarkMode }) => {
         </div>
         </div>
 }
-        </div>
         <Sidebar setShow={setSidebarOpen} showList={sidebarOpen} />
+
+        </div>
         <Outlet /> {/* This will render the correct page */}
         </div>
                 </>

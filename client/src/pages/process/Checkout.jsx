@@ -6,7 +6,7 @@ import LocationPicker from '../../components/Mapicker';
 import { API_BASEURL } from 'Var/URLS';
 import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
-import { FaCheckCircle, FaMoneyBill } from "react-icons/fa";
+import { FaCheckCircle, FaMoneyBill, FaQuestionCircle } from "react-icons/fa";
 
 const countries = [
   "Afghanistan",
@@ -205,7 +205,7 @@ const countries = [
   "Zambia",
   "Zimbabwe",
 ];
-function OrderSuccessCard() {
+function OrderSuccessCard({text,state = "successful"}) {
   return (
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
@@ -214,15 +214,22 @@ function OrderSuccessCard() {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="fixed inset-0 flex items-center justify-center z-50"
     >
+       {state == "netural" ? <div className="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center border border-green-100">
+        <FaQuestionCircle className="text-gray-700 text-5xl mx-auto mb-3" />
+        <h2 className="text-xl font-bold text-gray-800">
+          {text}
+        </h2>
+      </div>: 
       <div className="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center border border-green-100">
-        <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-3" />
+        <FaCheckCircle className="text-green-700 text-5xl mx-auto mb-3" />
         <h2 className="text-xl font-bold text-gray-800">
           Order Placed Successfully!
         </h2>
-        <p className="text-gray-500 mt-1">
-          Your order has been received. We’ll notify you when it’s on the way.
+        <p className="text-gray-500 mt-1 text-sm">
+            We’ll notify you when it’s on the way.
         </p>
       </div>
+       } 
     </motion.div>
   );
 }
@@ -232,12 +239,13 @@ let CheckoutForm = memo(() => {
   const [items, setItems] = useState([]);
   const [step, setStep] = useState(1);
   const [working, setworking] = useState(true);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState([false, null,"Successful "]);
   const [Mapop, setMapop] = useState(false);
-  const [errors, setErrors] = useState({firstName: undefined,
-    lastName: undefined,
-    email: undefined,
-    phone: undefined,
+  const [errors, setErrors] = useState({
+    // firstName: undefined,
+    // lastName: undefined,
+    // email: undefined,
+    // phone: undefined,
     address: undefined,
     city: undefined,
     coords: undefined,
@@ -249,10 +257,10 @@ let CheckoutForm = memo(() => {
     cardCvc: undefined
   });
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    // firstName: '',
+    // lastName: '',
+    // email: '',
+    // phone: '',
     address: '',
     city: '',
     coords: '',
@@ -292,14 +300,14 @@ let CheckoutForm = memo(() => {
   const validateStep = (currentStep) => {
     if(Mapop)return false
     const newErrors = {};
+    // if (currentStep === 1) {
+    //   if (!formData.firstName) newErrors.firstName = 'First name is required';
+    //   if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    //   if (!formData.email) newErrors.email = 'Email is required';
+    //   else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
+    //   if (!formData.phone) newErrors.phone = 'Phone number is required';
+    // }
     if (currentStep === 1) {
-      if (!formData.firstName) newErrors.firstName = 'First name is required';
-      if (!formData.lastName) newErrors.lastName = 'Last name is required';
-      if (!formData.email) newErrors.email = 'Email is required';
-      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
-      if (!formData.phone) newErrors.phone = 'Phone number is required';
-    }
-    if (currentStep === 2) {
       if (!formData.address) newErrors.address = 'Address is required';
       if (!formData.city) newErrors.city = 'City is required';
       if (!formData.country) newErrors.country = 'Country is required';
@@ -307,7 +315,7 @@ let CheckoutForm = memo(() => {
       if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required';
     }
 
-    if (currentStep === 3 && formData.paymentMethod === 'card') {
+    if (currentStep === 2 && formData.paymentMethod === 'card') {
       if (!formData.cardNumber) newErrors.cardNumber = 'Card number is required';
       if (!formData.cardExpiry) newErrors.cardExpiry = 'Expiry date is required';
       if (!formData.cardCvc) newErrors.cardCvc = 'CVC is required';
@@ -328,8 +336,14 @@ let CheckoutForm = memo(() => {
 
   const handleSubmit =async (e) => {
     e.preventDefault();
-    setworking(false)
+    if(items.length < 1){
+      setShowSuccess([true,"Your cart is empty ","netural"]);
+      setTimeout(() =>setShowSuccess([false,null,null]), 1400);
+      
+      return
+    }
     if (validateStep(step) && !Mapop) {
+      setworking(false)
       try {
         const token = localStorage.getItem("token"); 
         let res = await fetch(`${API_BASEURL}/order/process`,{method:'POST',  headers: {
@@ -337,7 +351,7 @@ let CheckoutForm = memo(() => {
           ...(token && { "Authorization": `Bearer ${token}`})
         },body:JSON.stringify(formData),credentials:'include'})
         if(res.ok){
-          setShowSuccess(true);
+          setShowSuccess([true,null,"Successful"]);
           refetchcart()
           setTimeout(() => navigate('/', { replace: true }), 1400);
         }
@@ -364,20 +378,20 @@ let CheckoutForm = memo(() => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Form */}
           <div className="flex-grow bg-white rounded-xl shadow-lg p-8">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8 flex-wrap">
               <h1 className="text-2xl font-bold text-gray-800">Checkout</h1>
               <div className="flex items-center gap-4">
-                <div className={`flex items-center ${step >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
+                {/* <div className={`flex items-center ${step >= 1 ? 'text-[var(--twoHover)]' : 'text-gray-400'}`}>
                   <User className="w-5 h-5" />
                   <span className="ml-2 hidden sm:inline">Personal</span>
-                </div>
-                <div className="w-8 h-px bg-gray-300" />
-                <div className={`flex items-center ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
+                </div> 
+                 <div className="w-8 h-px bg-gray-300" /> */}
+                <div className={`flex items-center ${step >= 1 ? 'text-[var(--twoHover)]' : 'text-gray-400'}`}>
                   <Truck className="w-5 h-5" />
                   <span className="ml-2 hidden sm:inline">Shipping</span>
                 </div>
                 <div className="w-8 h-px bg-gray-300" />
-                <div className={`flex items-center ${step >= 3 ? 'text-blue-600' : 'text-gray-400'}`}>
+                <div className={`flex items-center ${step >= 2 ? 'text-[var(--twoHover)]' : 'text-gray-400'}`}>
                   <CreditCard className="w-5 h-5" />
                   <span className="ml-2 hidden sm:inline">Payment</span>
                 </div>
@@ -385,76 +399,9 @@ let CheckoutForm = memo(() => {
             </div>
 
             <form onSubmit={handleSubmit}>
-              {/* Step 1: Personal Details */}
-              {step === 1 && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">First Name</label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className={`mt-1 block w-full rounded-md border ${
-                          errors.firstName ? 'border-red-300' : 'border-gray-300'
-                        } px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
-                      />
-                      {errors.firstName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Last Name</label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className={`mt-1 block w-full rounded-md border ${
-                          errors.lastName ? 'border-red-300' : 'border-gray-300'
-                        } px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
-                      />
-                      {errors.lastName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`mt-1 block w-full rounded-md border ${
-                        errors.email ? 'border-red-300' : 'border-gray-300'
-                      } px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className={`mt-1 block w-full rounded-md border ${
-                        errors.phone ? 'border-red-300' : 'border-gray-300'
-                      } px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
-                    />
-                    {errors.phone && (
-                      <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                    )}
-                  </div>
-                </div>
-              )}
 
-              {/* Step 2: Shipping Details */}
-              {step === 2 && (
+              {/* Step 1: Shipping Details */}
+              {step === 1 && (
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Street Address</label>
@@ -526,15 +473,20 @@ let CheckoutForm = memo(() => {
                       )}
                     </div>                    
                     </div>
+                      <div className="text-sm font-medium text-gray-900" title={"left-Click to place a marker"}>Place a Marker:
+
                       <LocationPicker error={errors.coords} setZipcode={HandleZipcode} onLocationSelected={handleLocationSelect} setMapop={setMapop} coords={formData.coords}/>
                       {errors.coords && (
                         <p className="mt-1 text-sm text-red-600">{errors.coords}</p>
                       )}
+
+
+                      </div>
                 </div>
               )}
 
-              {/* Step 3: Payment Details */}
-              {step === 3 && (
+              {/* Step 2: Payment Details */}
+              {step === 2 && (
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">Payment Method</label>
@@ -671,16 +623,17 @@ let CheckoutForm = memo(() => {
                     Back
                   </button>
                 )}
-                {step < 3 ? (
+                {step < 2 ? (
                   <button
                     type="button"
                     onClick={(e)=>{
+                      e.currentTarget.blur()
                       setMapop(false)
                       setTimeout(() => {
                         handleNext()
                       }, 0);
                     }}
-                    className="ml-auto flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="ml-auto flex items-center px-6 py-2 bg-[#000] transition transiton-all duration-150 text-white rounded-md hover:bg-[var(--twoHover)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Next
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -689,7 +642,8 @@ let CheckoutForm = memo(() => {
                   <button
                     type="submit"
                     disabled={!working}
-                    className="ml-auto px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    onClick={(e) => e.currentTarget.blur()}
+                    className={`ml-auto px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${!working && "bg-[var(--twoHover)]"}`}
                   >
                   {!working ? "Processing..." : "Place Order"}
                   </button>
@@ -744,7 +698,7 @@ let CheckoutForm = memo(() => {
           </div>
         </div>
       </div>
-        {showSuccess && <OrderSuccessCard />}
+        {showSuccess[0] && <OrderSuccessCard text={showSuccess[1]} state={showSuccess[2]}/>}
     </div>
   );
 })  

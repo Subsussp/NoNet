@@ -30,6 +30,8 @@ import Profile from 'pages/Account/Profile';
 import { useMotionValue, useSpring ,motion} from "framer-motion";
 import Layout from 'components/Layout';
 import Preloader from 'Preloader';
+import { Notify } from 'components/Notify';
+import ScrollRestoration from 'components/ScrollRestoration';
 
 const App = () => {
   let {data: itemdata,refetch,isLoading} = useQuery({queryKey:['items'],queryFn:fetchitems})
@@ -45,6 +47,7 @@ const App = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [userData, setUserData] = useState(null);
   const [showPreloader, setShowPreloader] = useState(true);
+  const [showNotify, setshowNotify] = useState([false,null]);
   const [done, setdone] = useState(false);
   const [cursorVariant, setCursorVariant] = useState("default");
   const cursorX = useMotionValue(-100);
@@ -82,7 +85,7 @@ const App = () => {
     }
   }
   
-    const textEnter = () => setCursorVariant("text");
+  const textEnter = () => setCursorVariant("text");
   const textLeave = () => setCursorVariant("default");
     
 
@@ -138,6 +141,30 @@ const App = () => {
       }
         
 },[isDarkMode])
+useEffect(() => {
+  const pageKey = "pageState";
+
+  const firstVisit = !sessionStorage.getItem(pageKey);
+
+  const reload = sessionStorage.getItem("isReload");
+
+  const directEntry = !sessionStorage.getItem(pageKey) && window.location.hash === "#/";
+
+  if (firstVisit || reload || directEntry) {
+    sessionStorage.setItem("isReload", "true");
+  }
+
+  sessionStorage.setItem(pageKey, "visited");
+
+  const handleBeforeUnload = () => {
+    sessionStorage.setItem("isReload", "true");
+  };
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
   useEffect(() => {
     if (Auth === '') {
       const token = localStorage.getItem("token"); 
@@ -174,6 +201,7 @@ const App = () => {
   }
   return (
     <>
+   <ScrollRestoration />
    {showPreloader && <Preloader delay={!!window.localStorage.getItem('alert') ? 120 : 620} onExit={() => setShowPreloader(false)} done={done}/>}
       {done &&  <> <motion.div
               className='cursor'
@@ -184,13 +212,15 @@ const App = () => {
               variants={variants}
               animate={cursorVariant}
             />
+   {showNotify[0] && <Notify textEnter={textEnter} textLeave={textLeave} text={showNotify[1]} onRemove={()=> setshowNotify([false,null])}/>}  
+
     <Shopcontext.Provider value={data}>
                  {
                    location.pathname == '/' ? <div className='fullscreen-container' >
-                          <Header setloadPre={setloadPre} userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} textLeave={textLeave} textEnter={textEnter}/>
-                          <Top darkmode={isDarkMode} textEnter={textEnter} textLeave={textLeave}/> 
+                          <Header showPreloader={done} setloadPre={setloadPre} userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} textLeave={textLeave} textEnter={textEnter}/>
+                          <Top done={done} darkmode={isDarkMode} textEnter={textEnter} textLeave={textLeave}/> 
                      </div>
-     : ((!['/admin','/dashboard','/users','/orders','/control','/analytics'].includes(location.pathname)) && <Header userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />)}
+                : ((!['/admin','/dashboard','/users','/orders','/control','/analytics'].includes(location.pathname)) && <Header showPreloader={done} userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />)}
     <Cartcontext.Provider value={{ cartdata, refetchcart }}> 
     <Routes>
       <Route element={<Layout textLeave={textLeave} textEnter={textEnter}/>}>
@@ -209,8 +239,8 @@ const App = () => {
     }/>       
         <Route path='/cart' element={<Cart Auth={Auth} textEnter={textEnter} textLeave={textLeave} />}/>       
         <Route path='/logout' element={<Logout textEnter={textEnter} textLeave={textLeave} setAuth={setAuth} setuserR={setuserR} />} />
-        <Route path='/cart/add-to-cart' element={<Addcart textEnter={textEnter} textLeave={textLeave}/>}/>       
-        <Route path='/store' element={<Store BestSellerAndMain={true} smallsize={smallsizw} textEnter={textEnter} textLeave={textLeave} Catg={!data ? [] : data.map((value)=>value.catg)} />}/>
+        <Route path='/cart/add-to-cart' element={<Addcart setNotify={setshowNotify}/>}/>       
+        <Route path='/store' element={<Store BestSellerAndMain={false} smallsize={smallsizw} textEnter={textEnter} textLeave={textLeave} Catg={!data ? [] : data.map((value)=>value.catg)} />}/>
       </Route>
 
       {/* Private Routes (Require Specific Role/User Access) */}
@@ -219,10 +249,10 @@ const App = () => {
             <Route element={                  
             <Maincontentwraper userR={userR} setDarkMode={setDarkMode} isDarkMode={isDarkMode} />                  }>
             <Route path="/dashboard" element={<Dashboard textEnter={textEnter} textLeave={textLeave} refetch={refetch}/>} />
-            <Route path="/orders" element={<Order textEnter={textEnter} textLeave={textLeave}/>} />
+            <Route path="/orders" element={<Order notify={setshowNotify} textEnter={textEnter} textLeave={textLeave}/>} />
             <Route path="/analytics" /> 
             <Route path="/control" element={<Products textEnter={textEnter} textLeave={textLeave} data={data} refetch={refetch} /> }/>
-            <Route path="/admin" element={<Adminpage setuserR={setuserR} setAuth={setAuth} textEnter={textEnter} textLeave={textLeave}/>} />
+            <Route path="/admin" element={<Adminpage notify={setshowNotify} darkMode={!isDarkMode} setuserR={setuserR} setAuth={setAuth} textEnter={textEnter} textLeave={textLeave}/>} />
             <Route path="/users" element={<Users textEnter={textEnter} textLeave={textLeave}/>} />
           </Route>
         </Route>  

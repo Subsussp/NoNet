@@ -23,9 +23,11 @@ import {
 import axios from "axios";
 import { API_ADMIN } from "Var/URLS";
 import { FaIntercom } from "react-icons/fa";
+import { OrderStatusBadge } from "./OrderStatusBadge";
+import Loader  from "Loader";
   
   
-const Adminpage = ({setuserR,setAuth}) => { 
+const Adminpage = ({setuserR,setAuth,darkMode}) => { 
   let navigate = useNavigate()
   const [salesData, setsalesData] = useState([]);
   const [OsalesData, setOsalesData] = useState([]);
@@ -37,9 +39,9 @@ const Adminpage = ({setuserR,setAuth}) => {
   const [recentOrders, setrecentOrders] = useState([]);
   const [Revenue, setRevenue] = useState([]);
   const [todaysOrdersCount, setTodaysOrdersCount] = useState(0);
+  const [load, setLoad] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   // let {data,isLoading,refetch} = useQuery({queryKey:['items'],queryFn:fetchitems}) 
   let location = useLocation()
@@ -102,11 +104,10 @@ const Adminpage = ({setuserR,setAuth}) => {
     fetchData();
     window.localStorage.setItem('ref',location.pathname)
   },[])
-    if (loading) return <>Loading...</>;
     if (error) return <p>Error: {error.message}</p>;
-    return (
-        <>
+    return <>
         {/* Dashboard Content */}
+        {!loading  &&
         <main className="p-6">
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -145,8 +146,8 @@ const Adminpage = ({setuserR,setAuth}) => {
                 <AreaChart data={salesData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#1d6b92" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#1d6b92" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#374151' : '#E5E7EB'} />
@@ -163,7 +164,7 @@ const Adminpage = ({setuserR,setAuth}) => {
                   <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#3B82F6" 
+                    stroke="#1d6b92" 
                     fillOpacity={1} 
                     fill="url(#colorValue)" 
                   />
@@ -171,11 +172,16 @@ const Adminpage = ({setuserR,setAuth}) => {
               </ResponsiveContainer>
             </div>
           </div>
-          
-
             <div className={`p-6 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-              <h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              <h2 className={`text-lg flex justify-between items-center font-semibold mb-4 -mt-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 Recent Orders
+          
+  <Link
+    to="/orders"
+    className={`px-3 py-2 font-medium transition-colors text-[var(--mainele)] transition-all duration-200 shadow-md rounded-lg ${darkMode ? "bg-gray-800 hover:bg-gray-900": "bg-gray-50 hover:bg-gray-100"} `}
+  >
+    See All Orders
+  </Link>
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -189,7 +195,7 @@ const Adminpage = ({setuserR,setAuth}) => {
                   </thead>
                   <tbody>
                     {recentOrders.map((order) => (
-                      <tr key={order._id} className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                      <tr key={order._id} className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'} ${['pending',"cancelled","shipped"].includes(order?.orderStatus) && "transition-all duration-200 hover:shadow-md hover:bg-gray-50"}`}>
                         <td className={`py-3 ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                           {order.shippingAddress.fullName}
                         </td>
@@ -199,32 +205,17 @@ const Adminpage = ({setuserR,setAuth}) => {
                         <td className={`py-3 ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                           ${order.totalAmount}
                         </td>
-                        <td className="py-3">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            order.orderStatus === 'delivered' 
-                              ? 'bg-green-100 text-green-800' 
-                              : order.orderStatus === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {order.orderStatus}
-                          </span>
+
+
+                        <td className="px-6 py-4 text-center">
+                          <OrderStatusBadge status={order.orderStatus} />
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
                 <div className="flex justify-end mt-4">
-  <Link
-    to="/orders"
-    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-      darkMode
-        ? "bg-blue-600 text-white hover:bg-blue-500"
-        : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-    }`}
-  >
-    See All Orders
-  </Link>
+
 </div>
               </div>
             </div>
@@ -243,7 +234,7 @@ const Adminpage = ({setuserR,setAuth}) => {
   </thead>
   <tbody>
     {OsalesData.map((day, index) => (
-      <tr key={index} className="border-b">
+      <tr key={index} className="border-b text-mainele">
         <td className="p-2">{day.name}</td>
         <td className="p-2 text-right">{day.value}</td>
       </tr>
@@ -254,14 +245,14 @@ const Adminpage = ({setuserR,setAuth}) => {
             </div>
           </div>
           </div>
-        </main>
-
-{/* 
-            <Users/>
-            <Orders/> */}
-            {/* <Dashboard refetch={refetch}/> */}
+        </main>}
+        {load && <Loader onExit={()=> setLoad(false)} done={loading}/>}
+    
+            {/* // <Users/>
+            // <Orders/> 
+            // {/* <Dashboard refetch={refetch}/>  */}
     </>
-    )
+    
 }
 
 export default Adminpage

@@ -8,7 +8,6 @@
             padding: 10px 20px;
         }
     }
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 
     @keyframes Drop {
         0%{
@@ -48,18 +47,19 @@
         height: 100%;
         scroll-behavior: smooth;
     }
-
     
     :root{
         --mainele: #000;
         --one: #fff;
         --firstDegree: #bebebe;
         --two: #1d6b92;
+        --twoHover: #104661;
         --sa: #384955;
         --Ghover: #6a746f;
         --dropitems: var(--one);
         --dropicons: var(--one);                    
-        --Main-font: 'baltidore';                    
+        --Main-font: 'baltidore';   
+        --Mfont: 'MyCustomFont';                 
         --Second-font: 'Parkinsans';         
         --Mainsize: clamp(3rem, 8.75vw, 7rem);
         --Secondegreesize: clamp(2rem, 5.75vw, 6rem);
@@ -100,7 +100,13 @@
         display: flex;
         flex-direction: column;
     }
-
+    .roun{
+        background-color: rgba(144, 149, 158, 0.196);
+    }
+    .notify{
+        font-family: "MyCustomFont";
+        color: #E5E7EB;
+    }
     .content {
         flex: 1;
     }
@@ -167,12 +173,11 @@
             font-weight: 500;
         }
         a{
-            color: var(--one);
             -webkit-appearance: none;
             appearance: none;
             text-decoration: none;
         }
-        #quantity{
+        .quantity{
             font-family: var(--Second-font),'Courier New', Courier, monospace;
             background-color: transparent;
             font-weight: 400;
@@ -663,6 +668,12 @@
                 letter-spacing: 1px; 
                 color: var(--one);
         }
+        .char{
+       position: relative;
+  transform: translateZ(0); 
+  will-change: transform;
+
+        }
         .main-title1{
             position: relative;
             top: 55%;
@@ -852,7 +863,7 @@
             top: 0;
             left: 0;
             pointer-events: none;
-            z-index: 200;
+            z-index: 800;
             }
         .accordion-inner input[type="checkbox"]:checked::after {
             content: '';
@@ -1027,7 +1038,7 @@
         }
         .floating-label {
             position: absolute;
-            font-family: 'Twentieth Century Condensed', sans-serif;
+            font-family: 'TwentiethCenturyCondensed', sans-serif;
             font-size: 1.6rem;
             letter-spacing: 3px;
             margin-bottom: 0;   
@@ -1042,13 +1053,13 @@
     .input-field:focus + .floating-label,
     .input-field:not(:focus):not(:empty) + .floating-label
     .input-field:not(:focus):not(:empty) + .floating-label {
-        font-family: 'Twentieth Century Condensed', sans-serif;
+        font-family: 'TwentiethCenturyCondensed', sans-serif;
         top: 27%;   
         font-size: .8rem;
     }
     .input-field:not(:focus) + .floating-label{
         transition: all ease 300ms;
-        font-family: 'Twentieth Century Condensed', sans-serif;
+        font-family: 'TwentiethCenturyCondensed', sans-serif;
         top: 50%;   
         padding-left: 2px;
         font-size: 1.7rem;
@@ -1185,19 +1196,21 @@
   font-style: normal;
 }
 @font-face {
-  font-family: 'Twentieth Century Condensed';
-  src: url('../public/fonts/TCCB.TTF') format('truetype');
+  font-family: 'TwentiethCenturyCondensed';
+  src: url('../public/fonts/TCCB.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
 }
 @font-face {
   font-family: 'Parkinsans';
   src: url('../public/fonts/Parkinsans-VariableFont_wght.ttf') format('truetype');
-    font-weight: 100 900; /* full weight range */
+  font-weight: 100 900;
   font-style: normal;
 }
 @font-face {
   font-family: 'Cinzel';
   src: url('../public/fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
-font-weight: 100 900; /* full weight range */
+  font-weight: 100 900;
   font-style: normal;
 }
 
