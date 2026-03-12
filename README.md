@@ -1,8 +1,9 @@
-# Elegant E-Commerce Store
+# Store
 
 It's a simple E-Commerce Store designed in a modern way with love :)
-. While the project isn’t 100% complete, it includes many working features and showcases a solid foundation.
 
+This is my first real project and I initially built it for someone i love it they have a small accessory business it might be simple but I'm satisfied and my only motive building this project was to show it to the person im talking about and give to them on their birthday ;)
+I put only god knows how many tireless days into this and i might have broken my back too 😭
 
 ## A Glimpse Inside
 
@@ -30,7 +31,8 @@ To explore the admin features, use the following credentials:
 
 ## Note
 
-This is still a work-in-progress. A few features are either incomplete or simplified due to time constraints, but the core systems are up and running.
+Sorry if some features aren't styled 
+time constraints and bad sleep with back pain demolished me so just focus on the technical stuff 
 
 ## Tech Stack
 
@@ -43,6 +45,4 @@ Here’s what powers the project:
 - ![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=flat-square) **Redis**
 
 
-## Thanks for checking it out!
-
-I spent a lot on this project and I'm always improving so if you have any recommendations or tips on what to improve here is my email sofaomda738@gmail.com
+## Thanks for checking it out <3
