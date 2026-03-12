@@ -3,7 +3,7 @@
 It's a simple E-Commerce Store designed in a modern way with love :)
 
 This is my first real project and I initially built it for someone i love it they have a small accessory business it might be simple but I'm satisfied and my only motive building this project was to show it to the person im talking about and give to them on their birthday ;)
-I put only god knows how many tireless days into this and i might have broken my back too 😭
+I put only god knows how many tireless days into this and i might have broken my back too 
 
 ## A Glimpse Inside
 
